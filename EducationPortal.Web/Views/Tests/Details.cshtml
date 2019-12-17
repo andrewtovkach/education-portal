@@ -1,0 +1,45 @@
+﻿@using EducationPortal.Web.Data.Enums
+@model TestDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Test @Model.TestName</h1>
+
+<form method="post" action="~/Tests/FinishTest/@Model.TestId">
+    <table class="questions-table">
+        @foreach (var question in Model.Questions)
+        {
+            <tr>
+                <td>
+                    <p class="question-content">@question.Content</p>
+
+                    @foreach (var answer in question.Answers)
+                    {
+                        <p class="answer">
+                            @switch (question.QuestionType)
+                            {
+                                case QuestionType.OneAnswer:
+                                    <input name="@question.Id" type="radio" value="@answer.Id"/>@answer.Content<br/>
+                                    break;
+                                case QuestionType.MultipleAnswers:
+                                    <input name="@question.Id" type="checkbox" value="@answer.Id"/>
+                                    @answer.Content<br/>
+                                    break;
+                                case QuestionType.TextInput:
+                                    <input name="@question.Id" type="text"/>
+                                    break;
+                            }
+                        </p>
+                    }
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <input type="submit" value="Send" />
+        </tr>
+
+    </table>
+</form>
+

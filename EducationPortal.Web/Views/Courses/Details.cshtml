@@ -1,0 +1,32 @@
+﻿@model CourseDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Course @Model.CourseName</h1>
+
+<h2>Education materials</h2>
+<table class="education-materials-table">
+    @foreach (var educationMaterial in Model.EducationMaterials)
+    {
+        <tr class="education-material">
+            <td>@educationMaterial.Name</td>
+            <td>@educationMaterial.MaterialImportance.ToString()</td>
+            <td><a class="btn btn-default" asp-controller="Courses" asp-action="GetEducationFileContent" asp-route-id="@educationMaterial.Id">Details</a></td>
+        </tr>
+    }
+</table>
+
+<h2>Tests</h2>
+
+<table class="tests-table">
+    @foreach (var test in Model.Tests)
+    {
+        <tr class="test">
+            <td>@test.Name</td>
+            <td>@test.TimeLimit minutes</td>
+            <td><a class="btn btn-default" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Id">Details</a></td>
+        </tr>
+    }
+</table>
+

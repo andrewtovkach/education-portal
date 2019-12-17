@@ -4,14 +4,16 @@ using EducationPortal.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EducationPortal.Web.Migrations
 {
     [DbContext(typeof(EducationPortalDbContext))]
-    partial class EducationPortalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191217122626_AnswerHistoryTableNewChanges")]
+    partial class AnswerHistoryTableNewChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,17 +73,11 @@ namespace EducationPortal.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AttemptId");
-
-                    b.Property<DateTime>("Date");
-
                     b.Property<int>("QuestionId");
 
                     b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AttemptId");
 
                     b.HasIndex("QuestionId");
 
@@ -93,8 +89,6 @@ namespace EducationPortal.Web.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Date");
 
                     b.Property<string>("Name");
 
@@ -223,11 +217,6 @@ namespace EducationPortal.Web.Migrations
 
             modelBuilder.Entity("EducationPortal.Web.Data.Entities.AnswerHistoryData", b =>
                 {
-                    b.HasOne("EducationPortal.Web.Data.Entities.Attempt", "Attempt")
-                        .WithMany()
-                        .HasForeignKey("AttemptId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("EducationPortal.Web.Data.Entities.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")

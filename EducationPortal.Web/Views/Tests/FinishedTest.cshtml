@@ -1,0 +1,36 @@
+﻿@using EducationPortal.Web.Data.Entities
+@using EducationPortal.Web.Data.Enums
+@model IEnumerable<AnswerHistoryData>
+@{
+    ViewData["Title"] = "Finished Test";
+}
+
+<h1>Finished Test</h1>
+
+<table class="questions-table">
+    @foreach (var answerHistoryData in Model)
+        {
+    <tr>
+        <td>
+            <p class="question-content">@answerHistoryData.Question.Content</p>
+        </td>
+    </tr>
+    foreach (var answerHistory in answerHistoryData.AnswerHistories)
+                    {
+    <tr>
+        @if (answerHistoryData.Question.QuestionType != QuestionType.TextInput)
+    {
+        <td>@answerHistory.Answer.Content</td>
+    }
+    else
+    {
+        <td>@answerHistory.TextInput</td>
+    }
+        <td>@answerHistory.IsCorrect</td>
+        <td>@answerHistory.NumberOfPoints</td>
+    </tr>
+                    }
+        }
+</table>
+
+

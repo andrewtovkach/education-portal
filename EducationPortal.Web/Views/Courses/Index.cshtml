@@ -1,0 +1,20 @@
+﻿@using EducationPortal.Web.Data.Entities
+@model IEnumerable<Course>
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h1>Courses</h1>
+    
+<table class="courses-table">
+    @foreach (var course in Model)
+{
+    <tr class="course">
+        <td>@course.Name</td>
+        <td>@course.TrainingHours</td>
+        <td>@course.CourseComplexity.ToString()</td>
+        <td><a class="btn btn-default" asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">Details</a></td>
+    </tr>
+}
+</table>

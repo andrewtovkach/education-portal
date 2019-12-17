@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using EducationPortal.Web.Data.Entities;
+﻿using EducationPortal.Web.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationPortal.Web.Data
@@ -51,6 +50,11 @@ namespace EducationPortal.Web.Data
             modelBuilder.Entity<Attempt>()
                 .HasOne(c => c.TestCompletion)
                 .WithMany(c => c.Attempts);
+
+            modelBuilder.Entity<AnswerHistoryData>()
+                .HasOne(c => c.Attempt)
+                .WithMany(c => c.AnswerHistoryData)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TestCompletion>()
                 .HasOne(c => c.Test)
