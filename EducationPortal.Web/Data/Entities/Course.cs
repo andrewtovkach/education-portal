@@ -11,5 +11,23 @@ namespace EducationPortal.Web.Data.Entities
         public CourseComplexity CourseComplexity { get; set; }
         public ICollection<EducationMaterial> EducationMaterials { get; set; }
         public ICollection<Test> Tests { get; set; }
+
+        public string ComplexityIconName
+        {
+            get
+            {
+                switch (CourseComplexity)
+                {
+                    case CourseComplexity.Beginner:
+                        return "one.svg";
+                    case CourseComplexity.Intermediate:
+                        return "two.svg";
+                    case CourseComplexity.Advanced:
+                        return "three.svg";
+                    default:
+                        return "one.svg";
+                }
+            }
+        }
     }
 }

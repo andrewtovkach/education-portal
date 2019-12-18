@@ -64,8 +64,54 @@ namespace EducationPortal.Web.Controllers
             AddAnswerHistoryData(test, form, attemptId);
             UpdateTotalScore(test, attemptId);
 
-            return RedirectToAction("FinishedTest", new {id = attemptId });
+            return RedirectToAction("FinishedTest", new { id });
         }
+
+        public IActionResult FinishedTest(int id)
+        {
+            var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+
+            var testCompletion = _educationPortalDbContext.TestCompletions.Where(x => x.TestId == id && x.UserId == Guid.Parse(userId))
+                .Include(x => x.Attempts)
+                .FirstOrDefault();
+
+            if (testCompletion == null)
+            {
+                return NotFound();
+            }
+
+            var finishedTestViewModel = new FinishedTestViewModel
+            {
+                TestName = test.Name,
+                Attempts = testCompletion.Attempts.OrderByDescending(x => x.Date)
+            };
+
+            return View(finishedTestViewModel);
+        }
+
+        public IActionResult TestAttempt(int id)
+        {
+            var attempt = _educationPortalDbContext.Attempts
+                .Where(x => x.Id == id)
+                .Include(x => x.AnswerHistoryData)
+                .ThenInclude(x => x.AnswerHistories)
+                .ThenInclude(x => x.Answer)
+                .Include(x => x.AnswerHistoryData)
+                .ThenInclude(x => x.Question)
+                .ThenInclude(x => x.Answers)
+                .FirstOrDefault();
+
+            return View(attempt);
+        }
+
+        #region Private Methods
 
         private void UpdateTotalScore(Test test, int attemptId)
         {
@@ -80,24 +126,6 @@ namespace EducationPortal.Web.Controllers
             currentAttempt.Score = totalScore;
 
             _educationPortalDbContext.SaveChanges();
-        }
-
-        public IActionResult FinishedTest(int id)
-        {
-            var attempt = _educationPortalDbContext.Attempts.Where(x => x.Id == id)
-                .Include(x => x.AnswerHistoryData)
-                .ThenInclude(x => x.Question)
-                .Include(x => x.AnswerHistoryData)
-                .ThenInclude(x => x.AnswerHistories)
-                .ThenInclude(x => x.Answer)
-                .FirstOrDefault();
-
-            if (attempt == null)
-            {
-                return NotFound();
-            }
-
-            return View(attempt.AnswerHistoryData);
         }
 
         private int AddTestAttempt(int testId, string userId)
@@ -234,5 +262,7 @@ namespace EducationPortal.Web.Controllers
 
             return totalScore;
         }
+
+        #endregion
     }
 }

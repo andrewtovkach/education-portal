@@ -1,36 +1,19 @@
-﻿@using EducationPortal.Web.Data.Entities
-@using EducationPortal.Web.Data.Enums
-@model IEnumerable<AnswerHistoryData>
+﻿@model FinishedTestViewModel
 @{
-    ViewData["Title"] = "Finished Test";
+    ViewData["Title"] = $"Finished Test {Model.TestName}";
 }
 
-<h1>Finished Test</h1>
+<h1>Finished Test @Model.TestName</h1>
 
-<table class="questions-table">
-    @foreach (var answerHistoryData in Model)
+<table class="attempts-table">
+    @foreach (var attempt in Model.Attempts)
     {
-        <tr>
-            <td>
-                <p class="question-content">@answerHistoryData.Question.Content</p>
-            </td>
+        <tr class="attempt">
+            <td>@attempt.Name</td>
+            <td>@attempt.Date</td>
+            <td>@attempt.Score</td>
+            <td><a class="btn btn-default" asp-controller="Tests" asp-action="TestAttempt" asp-route-id="@attempt.Id">Open</a></td>
         </tr>
-
-        foreach (var answerHistory in answerHistoryData.AnswerHistories)
-        {
-            <tr>
-                @if (answerHistoryData.Question.QuestionType != QuestionType.TextInput)
-                {
-                    <td>@answerHistory.Answer.Content</td>
-                }
-                else
-                {
-                    <td>@answerHistory.TextInput</td>
-                }
-                <td>@answerHistory.IsCorrect</td>
-                <td>@answerHistory.NumberOfPoints</td>
-            </tr>
-        }
     }
 </table>
 

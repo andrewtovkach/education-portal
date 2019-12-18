@@ -3,31 +3,43 @@
     ViewData["Title"] = $"Course {Model.CourseName}";
 }
 
-<h1>Course @Model.CourseName</h1>
+<div class="page-header">
+    <h1>Курс @Model.CourseName</h1>
+    <br />
+</div>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Имя теста</th>
+            <th scope="col">Временные ограничения</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var test in Model.Tests)
+{
+        <tr scope="row">
+            <td>@test.Name</td>
+            <td>@test.TimeLimit минут</td>
+            <td>
+                <a class="btn btn-default" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Id">Открыть</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
 
 <h3>Education materials</h3>
 
 <table class="education-materials-table">
     @foreach (var educationMaterial in Model.EducationMaterials)
     {
-        <tr class="education-material">
-            <td>@educationMaterial.Name</td>
-            <td>@educationMaterial.MaterialImportance.ToString()</td>
-            <td><a class="btn btn-default" asp-controller="Courses" asp-action="GetEducationFileContent" asp-route-id="@educationMaterial.Id">View</a></td>
-        </tr>
-    }
-</table>
-
-<h3>Tests</h3>
-
-<table class="tests-table">
-    @foreach (var test in Model.Tests)
-    {
-        <tr class="test">
-            <td>@test.Name</td>
-            <td>@test.TimeLimit minutes</td>
-            <td><a class="btn btn-default" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Id">Open</a></td>
-        </tr>
+    <tr class="education-material">
+        <td>@educationMaterial.Name</td>
+        <td>@educationMaterial.MaterialImportance.ToString()</td>
+        <td><a class="btn btn-default" asp-controller="Courses" asp-action="GetEducationFileContent" asp-route-id="@educationMaterial.Id">View</a></td>
+    </tr>
     }
 </table>
 

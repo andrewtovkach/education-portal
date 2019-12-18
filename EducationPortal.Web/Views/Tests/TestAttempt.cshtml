@@ -1,0 +1,63 @@
+﻿@using EducationPortal.Web.Data.Entities
+@using EducationPortal.Web.Data.Enums
+@model Attempt
+
+@{
+    ViewData["Title"] = $"Test Attempt {Model.Name}";
+}
+
+<h1>Test Attempt @Model.Name</h1>
+
+<table class="questions-table">
+    @foreach (var answerHistoryData in Model.AnswerHistoryData)
+    {
+            <tr class="question-container">
+                <td>
+                    <p class="question-content">@answerHistoryData.Question.Content</p>
+                </td>
+            </tr>
+
+         foreach (var answer in answerHistoryData.Question.Answers)
+         {
+            <tr class="answer">
+                @if (!answerHistoryData.AnswerHistories.Any(x => x.AnswerId == answer.Id))
+                {
+                    <td class="answer-content">
+                        @answer.Content
+                    </td>
+                    <td class="answer-result">
+                        False
+                    </td>
+                    <td class="answer-score">
+                        0
+                    </td>
+                }
+                else
+                {
+                    var answerHistory = answerHistoryData.AnswerHistories.FirstOrDefault(x => x.AnswerId == answer.Id);
+
+                    if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
+                    {
+                        <td class="answer-content">
+                            @answerHistory.TextInput
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="answer-content">
+                            @answer.Content
+                        </td>
+                    }
+
+                    <td class="answer-result">
+                        @answerHistory.IsCorrect
+                    </td>
+                    <td class="answer-score">
+                        @answerHistory.NumberOfPoints
+                    </td>
+                }
+            </tr>
+         }
+    }
+</table>
+
