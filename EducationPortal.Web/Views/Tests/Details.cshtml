@@ -1,7 +1,7 @@
 ﻿@using EducationPortal.Web.Data.Enums
 @model TestDetailsViewModel
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Test {Model.TestName}";
 }
 
 <h1>Test @Model.TestName</h1>
@@ -10,7 +10,7 @@
     <table class="questions-table">
         @foreach (var question in Model.Questions)
         {
-            <tr>
+            <tr class="question-container">
                 <td>
                     <p class="question-content">@question.Content</p>
 
@@ -37,7 +37,9 @@
         }
 
         <tr>
-            <input type="submit" value="Send" />
+            <td>
+                <input type="submit" value="Send"/>
+            </td>
         </tr>
 
     </table>

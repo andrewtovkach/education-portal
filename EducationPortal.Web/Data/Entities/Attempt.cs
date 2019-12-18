@@ -11,7 +11,6 @@ namespace EducationPortal.Web.Data.Entities
         public DateTime Date { get; set; }
         public TestCompletion TestCompletion { get; set; }
         public int TestCompletionId { get; set; }
-
         public ICollection<AnswerHistoryData> AnswerHistoryData { get; set; }
     }
 }

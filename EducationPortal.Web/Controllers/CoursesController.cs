@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using EducationPortal.Web.Data;
 using EducationPortal.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EducationPortal.Web.Controllers
 {
+    [Authorize]
     public class CoursesController : Controller
     {
         private readonly EducationPortalDbContext _educationPortalDbContext;
@@ -20,12 +22,17 @@ namespace EducationPortal.Web.Controllers
             return View(_educationPortalDbContext.Courses);
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(int id)
         {
             var course = _educationPortalDbContext.Courses.Where(c => c.Id == id)
                 .Include(c => c.EducationMaterials)
                 .Include(c => c.Tests)
                 .FirstOrDefault();
+
+            if (course == null)
+            {
+                return NotFound();
+            }
 
             var courseDetailsViewModel = new CourseDetailsViewModel
             {
@@ -40,7 +47,13 @@ namespace EducationPortal.Web.Controllers
         public IActionResult GetEducationFileContent(int? id)
         {
             var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
-            return new FileContentResult(educationMaterial.Data, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+
+            if (educationMaterial == null)
+            {
+                return NotFound();
+            }
+
+            return new FileContentResult(educationMaterial.Data, educationMaterial.ContentType);
         }
     }
 }

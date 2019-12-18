@@ -9,28 +9,29 @@
 
 <table class="questions-table">
     @foreach (var answerHistoryData in Model)
+    {
+        <tr>
+            <td>
+                <p class="question-content">@answerHistoryData.Question.Content</p>
+            </td>
+        </tr>
+
+        foreach (var answerHistory in answerHistoryData.AnswerHistories)
         {
-    <tr>
-        <td>
-            <p class="question-content">@answerHistoryData.Question.Content</p>
-        </td>
-    </tr>
-    foreach (var answerHistory in answerHistoryData.AnswerHistories)
-                    {
-    <tr>
-        @if (answerHistoryData.Question.QuestionType != QuestionType.TextInput)
-    {
-        <td>@answerHistory.Answer.Content</td>
-    }
-    else
-    {
-        <td>@answerHistory.TextInput</td>
-    }
-        <td>@answerHistory.IsCorrect</td>
-        <td>@answerHistory.NumberOfPoints</td>
-    </tr>
-                    }
+            <tr>
+                @if (answerHistoryData.Question.QuestionType != QuestionType.TextInput)
+                {
+                    <td>@answerHistory.Answer.Content</td>
+                }
+                else
+                {
+                    <td>@answerHistory.TextInput</td>
+                }
+                <td>@answerHistory.IsCorrect</td>
+                <td>@answerHistory.NumberOfPoints</td>
+            </tr>
         }
+    }
 </table>
 
 

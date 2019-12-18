@@ -5,6 +5,7 @@ using EducationPortal.Web.Data;
 using EducationPortal.Web.Data.Entities;
 using EducationPortal.Web.Data.Enums;
 using EducationPortal.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EducationPortal.Web.Controllers
 {
+    [Authorize]
     public class TestsController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -22,20 +24,24 @@ namespace EducationPortal.Web.Controllers
         {
             _educationPortalDbContext = educationPortalDbContext;
             _userManager = userManager;
-
         }
 
-        public IActionResult Details(int? id)
+        public IActionResult Details(int id)
         {
             var test = _educationPortalDbContext.Tests.Where(x => x.Id == id)
                 .Include(x => x.Questions)
                 .ThenInclude(x => x.Answers)
                 .FirstOrDefault();
 
+            if (test == null)
+            {
+                return NotFound();
+            }
+
             var testDetailsViewModel = new TestDetailsViewModel
             {
-                Questions = test?.Questions,
-                TestName = test?.Name,
+                Questions = test.Questions,
+                TestName = test.Name,
                 TestId = test.Id
             };
 
@@ -43,7 +49,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult FinishTest(int? id)
+        public IActionResult FinishTest(int id)
         {
             var test = _educationPortalDbContext.Tests.Where(x => x.Id == id)
                 .Include(x => x.Questions)
@@ -53,26 +59,30 @@ namespace EducationPortal.Web.Controllers
             var form = HttpContext.Request.Form;
 
             var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
-            var attemptId = AddTestAttempt(id);
+            var attemptId = AddTestAttempt(id, userId);
 
-            AddAnswerHistoryData(test, form, userId, attemptId);
-
-            CalculateTotalScore(test, attemptId);
+            AddAnswerHistoryData(test, form, attemptId);
+            UpdateTotalScore(test, attemptId);
 
             return RedirectToAction("FinishedTest", new {id = attemptId });
         }
 
-        private void CalculateTotalScore(Test test, int attemptId)
+        private void UpdateTotalScore(Test test, int attemptId)
         {
             var totalScore = GetTotalScore(test);
 
             var currentAttempt = _educationPortalDbContext.Attempts.FirstOrDefault(x => x.Id == attemptId);
+            if (currentAttempt == null)
+            {
+                return;
+            }
+
             currentAttempt.Score = totalScore;
 
             _educationPortalDbContext.SaveChanges();
         }
 
-        public IActionResult FinishedTest(int? id)
+        public IActionResult FinishedTest(int id)
         {
             var attempt = _educationPortalDbContext.Attempts.Where(x => x.Id == id)
                 .Include(x => x.AnswerHistoryData)
@@ -82,10 +92,15 @@ namespace EducationPortal.Web.Controllers
                 .ThenInclude(x => x.Answer)
                 .FirstOrDefault();
 
+            if (attempt == null)
+            {
+                return NotFound();
+            }
+
             return View(attempt.AnswerHistoryData);
         }
 
-        private int AddTestAttempt(int? testId)
+        private int AddTestAttempt(int testId, string userId)
         {
             if (!_educationPortalDbContext.TestCompletions.Any(x => x.TestId == testId))
             {
@@ -97,7 +112,8 @@ namespace EducationPortal.Web.Controllers
 
                 _educationPortalDbContext.TestCompletions.Add(new TestCompletion
                 {
-                    TestId = testId.Value,
+                    UserId = Guid.Parse(userId),
+                    TestId = testId,
                     Attempts = new List<Attempt>
                     {
                         newAttempt
@@ -114,6 +130,11 @@ namespace EducationPortal.Web.Controllers
                     .Include(x => x.Attempts)
                     .FirstOrDefault();
 
+                if (testCompletion == null)
+                {
+                    return -1;
+                }
+
                 var newAttempt = new Attempt
                 {
                     Date = DateTime.Now,
@@ -127,20 +148,27 @@ namespace EducationPortal.Web.Controllers
             }
         }
 
-        private void AddAnswerHistoryData(Test test, IFormCollection form, string userId, int attemptId)
+        private void AddAnswerHistoryData(Test test, IFormCollection form, int attemptId)
         {
             foreach (var question in test.Questions)
             {
                 if (question.QuestionType == QuestionType.OneAnswer ||
                     question.QuestionType == QuestionType.MultipleAnswers)
                 {
-                    var answerHistories = form[question.Id.ToString()].Select(x => new AnswerHistory
+                    var answerHistories = form[question.Id.ToString()].Select(x =>
                     {
-                        AnswerId = Convert.ToInt32(x),
-                        IsCorrect = question.Answers.FirstOrDefault(a => a.Id == Convert.ToInt32(x)).IsCorrect,
-                        NumberOfPoints = question.Answers.FirstOrDefault(a => a.Id == Convert.ToInt32(x)).IsCorrect
-                            ? question.Answers.FirstOrDefault(a => a.Id == Convert.ToInt32(x)).NumberOfPoints
-                            : 0,
+                        var answer = question.Answers.FirstOrDefault(a => a.Id == Convert.ToInt32(x));
+                        if (answer == null)
+                        {
+                            return null;
+                        }
+
+                        return new AnswerHistory
+                        {
+                            AnswerId = Convert.ToInt32(x),
+                            IsCorrect = answer.IsCorrect,
+                            NumberOfPoints = answer.IsCorrect ? answer.NumberOfPoints : 0
+                        };
                     });
 
                     _educationPortalDbContext.AnswerHistoryData.Add(new AnswerHistoryData
@@ -148,7 +176,6 @@ namespace EducationPortal.Web.Controllers
                         AttemptId = attemptId,
                         Date = DateTime.Now,
                         QuestionId = question.Id,
-                        UserId = Guid.Parse(userId),
                         AnswerHistories = answerHistories.ToList()
                     });
                 }
@@ -156,20 +183,25 @@ namespace EducationPortal.Web.Controllers
                 {
                     var answer = question.Answers.FirstOrDefault();
 
+                    if (answer == null)
+                    {
+                        return;
+                    }
+
+                    var textInput = form[question.Id.ToString()];
                     _educationPortalDbContext.AnswerHistoryData.Add(new AnswerHistoryData
                     {
                         AttemptId = attemptId,
                         Date = DateTime.Now,
                         QuestionId = question.Id,
-                        UserId = Guid.Parse(userId),
                         AnswerHistories = new List<AnswerHistory>
                         {
                             new AnswerHistory
                             {
                                 AnswerId = answer.Id,
-                                TextInput = form[question.Id.ToString()],
-                                IsCorrect = form[question.Id.ToString()] == answer.Content,
-                                NumberOfPoints = form[question.Id.ToString()] == answer.Content ? answer.NumberOfPoints : 0
+                                TextInput = textInput,
+                                IsCorrect = textInput == answer.Content,
+                                NumberOfPoints = textInput == answer.Content ? answer.NumberOfPoints : 0
                             }
                         }
                     });
@@ -182,6 +214,7 @@ namespace EducationPortal.Web.Controllers
         private int GetTotalScore(Test test)
         {
             var totalScore = 0;
+
             foreach (var question in test.Questions)
             {
                 var answerHistoryData = _educationPortalDbContext.AnswerHistoryData
@@ -189,6 +222,11 @@ namespace EducationPortal.Web.Controllers
                     .OrderByDescending(x => x.Date)
                     .Include(x => x.AnswerHistories)
                     .FirstOrDefault();
+
+                if (answerHistoryData == null)
+                {
+                    continue;
+                }
 
                 var questionScore = answerHistoryData.AnswerHistories.Sum(x => x.NumberOfPoints);
                 totalScore += questionScore;

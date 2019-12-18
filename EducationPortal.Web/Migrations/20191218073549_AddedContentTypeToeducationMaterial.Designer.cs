@@ -4,14 +4,16 @@ using EducationPortal.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EducationPortal.Web.Migrations
 {
     [DbContext(typeof(EducationPortalDbContext))]
-    partial class EducationPortalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191218073549_AddedContentTypeToeducationMaterial")]
+    partial class AddedContentTypeToeducationMaterial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,6 +78,8 @@ namespace EducationPortal.Web.Migrations
                     b.Property<DateTime>("Date");
 
                     b.Property<int>("QuestionId");
+
+                    b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
 
@@ -192,8 +196,6 @@ namespace EducationPortal.Web.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("TestId");
-
-                    b.Property<Guid>("UserId");
 
                     b.HasKey("Id");
 
