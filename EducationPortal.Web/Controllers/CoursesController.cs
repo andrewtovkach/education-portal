@@ -97,13 +97,19 @@ namespace EducationPortal.Web.Controllers
 
             foreach (var test in currentModule.Tests)
             {
-                testsCollection.Add(new TestViewModel
+                var testCompletion = _educationPortalDbContext.TestCompletions.Where(x => x.UserId == Guid.Parse(userId) && x.TestId == test.Id)
+                    .Include(x => x.Attempts)
+                    .FirstOrDefault();
+
+                var hasTestCompletions = testCompletion != null;
+                var testViewModel = new TestViewModel { HasTestCompletions = hasTestCompletions, Test = test };
+
+                if (hasTestCompletions)
                 {
-                    HasCompletions =
-                        _educationPortalDbContext.TestCompletions.Any(
-                            x => x.UserId == Guid.Parse(userId) && x.TestId == test.Id),
-                    Test = test
-                });
+                    testViewModel.AttemptsCount = testCompletion.Attempts.Count;
+                }
+
+                testsCollection.Add(testViewModel);
             }
 
             return testsCollection;

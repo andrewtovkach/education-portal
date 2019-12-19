@@ -3,13 +3,21 @@
     ViewData["Title"] = $"Тест {Model.TestName}";
 }
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Курс @Model.CourseName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Тест @Model.TestName</li>
+    </ol>
+</nav>
+
 <div class="page-header">
     <h1>Тест @Model.TestName</h1>
-    <br />
+    <hr />
 </div>
 
 <table class="table">
-    <thead class="thead-dark">
+    <thead class="thead-light">
         <tr>
             <th scope="col">Имя</th>
             <th scope="col">Дата</th>

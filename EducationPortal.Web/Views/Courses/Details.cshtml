@@ -3,9 +3,16 @@
     ViewData["Title"] = $"Курс {Model.CourseName}";
 }
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Курс @Model.CourseName</li>
+    </ol>
+</nav>
+
 <div class="page-header">
     <h1>Курс @Model.CourseName</h1>
-    <br />
+    <hr />
 </div>
 
 <ul class="nav nav-tabs">
@@ -28,7 +35,7 @@
 <h3>Образовательные материалы</h3>
 
 <table class="table">
-    <thead class="thead-dark">
+    <thead class="thead-light">
         <tr>
             <th scope="col">Имя</th>
             <th scope="col">Важность</th>
@@ -50,7 +57,7 @@
 <h3>Тесты</h3>
 
 <table class="table">
-    <thead class="thead-dark">
+    <thead class="thead-light">
         <tr>
             <th scope="col">Имя</th>
             <th scope="col">Временные ограничения</th>
@@ -64,18 +71,23 @@
                     <td>@test.Test.Name</td>
                     <td>@test.Test.TimeLimit минут</td>
                     <td>
-                        @if (!test.HasCompletions)
+                        @if (test.HasTestCompletions)
                         {
-                            <a class="btn btn-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Действия
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пересдать</a>
+                                    <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Попытки 
+                                        <span class="badge badge-light">@test.AttemptsCount</span></a>
+                                </div>
+                            </div>
+
                         }
                         else
                         {
-                            <a class="btn btn-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пересдать</a>
-                        }
-
-                        @if (test.HasCompletions)
-                        {
-                            <a class="btn btn-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Попытки</a>
+                            <a class="btn btn-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
                         }
                     </td>
                 </tr>

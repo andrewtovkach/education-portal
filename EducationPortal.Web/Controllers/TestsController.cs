@@ -31,6 +31,8 @@ namespace EducationPortal.Web.Controllers
             var test = _educationPortalDbContext.Tests.Where(x => x.Id == id)
                 .Include(x => x.Questions)
                 .ThenInclude(x => x.Answers)
+                .Include(x => x.Module)
+                .ThenInclude(x => x.Course)
                 .FirstOrDefault();
 
             if (test == null || test.Questions.Count == 0)
@@ -38,11 +40,15 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
+            var questionViewModels = GetQuestionViewModels(test);
+
             var testDetailsViewModel = new TestDetailsViewModel
             {
-                Questions = test.Questions,
+                Questions = questionViewModels,
                 TestName = test.Name,
-                TestId = test.Id
+                TestId = test.Id,
+                CourseId = test.Module.CourseId,
+                CourseName = test.Module.Course.Name
             };
 
             return View(testDetailsViewModel);
@@ -80,6 +86,9 @@ namespace EducationPortal.Web.Controllers
 
             var testCompletion = _educationPortalDbContext.TestCompletions.Where(x => x.TestId == id && x.UserId == Guid.Parse(userId))
                 .Include(x => x.Attempts)
+                .Include(x => x.Test)
+                .ThenInclude(x => x.Module)
+                .ThenInclude(x => x.Course)
                 .FirstOrDefault();
 
             if (testCompletion == null)
@@ -90,7 +99,9 @@ namespace EducationPortal.Web.Controllers
             var finishedTestViewModel = new FinishedTestViewModel
             {
                 TestName = test.Name,
-                Attempts = testCompletion.Attempts.OrderByDescending(x => x.Date)
+                Attempts = testCompletion.Attempts.OrderByDescending(x => x.Date),
+                CourseName = test.Module.Course.Name,
+                CourseId = test.Module.Course.Id
             };
 
             return View(finishedTestViewModel);
@@ -114,7 +125,11 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
-            var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == attempt.TestCompletion.TestId);
+            var test = _educationPortalDbContext.Tests
+                .Include(x => x.Module)
+                .ThenInclude(x => x.Course)
+                .FirstOrDefault(x => x.Id == attempt.TestCompletion.TestId);
+
             if (test == null)
             {
                 return NotFound();
@@ -123,13 +138,34 @@ namespace EducationPortal.Web.Controllers
             var attemptViewModel = new AttemptViewModel
             {
                 TestName = test.Name,
-                Attempt = attempt
+                TestId = test.Id,
+                Attempt = attempt,
+                CourseName = test.Module.Course.Name,
+                CourseId = test.Module.CourseId
             };
 
             return View(attemptViewModel);
         }
 
         #region Private Methods
+        private static IList<QuestionViewModel> GetQuestionViewModels(Test test)
+        {
+            var questionViewModels = new List<QuestionViewModel>();
+            var questionNumber = 1;
+            foreach (var question in test.Questions)
+            {
+                questionViewModels.Add(new QuestionViewModel
+                {
+                    Question = question,
+                    QuestionNumber = questionNumber
+                });
+
+                questionNumber++;
+            }
+
+            return questionViewModels;
+        }
+
         private void UpdateTotalScore(Test test, int attemptId)
         {
             var totalScore = GetTotalScore(test);

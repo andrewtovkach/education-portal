@@ -5,65 +5,75 @@
     ViewData["Title"] = Model.Attempt.Name;
 }
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Курс @Model.CourseName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@Model.TestId">Тест @Model.TestName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Attempt.Name</li>
+    </ol>
+</nav>
+
 <div class="page-header">
     <h1>Тест @Model.TestName - @Model.Attempt.Name</h1>
+    <hr/>
 </div>
 
 @foreach (var answerHistoryData in Model.Attempt.AnswerHistoryData)
     {
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title">@answerHistoryData.Question.Content</h5>
-        <div class="card-text">
-            @foreach (var answer in answerHistoryData.Question.Answers)
+   <div class="card">
+       <h5 class="card-header">@answerHistoryData.Question.Content</h5>
+       <div class="card-body">
+            <div class="card-text">
+                @foreach (var answer in answerHistoryData.Question.Answers)
+                {
+                    if (answerHistoryData.AnswerHistories.All(x => x.AnswerId != answer.Id))
                     {
-                        if (answerHistoryData.AnswerHistories.All(x => x.AnswerId != answer.Id))
-                         {
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col">
-                                        @answer.Content
-                                    </div>
-                                    <div class="col"></div>
-                                </div>
-                            </div>
-                         }
-                        else
-                        {
-                            var answerHistory = answerHistoryData.AnswerHistories.FirstOrDefault(x => x.AnswerId == answer.Id);
-
-                            <div class="container">
-                                <div class="row">
-                                    @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
-                                    {
-                                        <div class="col">
-                                            @answerHistory.TextInput
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="col">
-                                            @answer.Content
-                                        </div>
-                                    }
-
-                                    @if (answerHistory.IsCorrect)
-                                    {
-                                        <div class="col">
-                                            <img src="~/icons/correct.svg" height="20px" />
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="col">
-                                            <img src="~/icons/wrong.svg" height="20px" />
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            @answer.Content
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </div>
                     }
+                    else
+                    {
+                        var answerHistory = answerHistoryData.AnswerHistories.FirstOrDefault(x => x.AnswerId == answer.Id);
+
+                <div class="container">
+                    <div class="row">
+                        @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
+                                {
+                        <div class="col">
+                            @answerHistory.TextInput
+                        </div>
+                                }
+                                else
+                                {
+                        <div class="col">
+                            @answer.Content
+                        </div>
+                                }
+
+                        @if (answerHistory.IsCorrect)
+                                {
+                        <div class="col">
+                            <img src="~/icons/correct.svg" height="20px" />
+                        </div>
+                                }
+                                else
+                                {
+                        <div class="col">
+                            <img src="~/icons/wrong.svg" height="20px" />
+                        </div>
+                                }
+                    </div>
+                </div>
+                    }
+                }
+            </div>
         </div>
-    </div>
 </div>
     }
