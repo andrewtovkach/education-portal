@@ -1,63 +1,69 @@
-﻿@using EducationPortal.Web.Data.Entities
-@using EducationPortal.Web.Data.Enums
-@model Attempt
+﻿@using EducationPortal.Web.Data.Enums
+@model AttemptViewModel
 
 @{
-    ViewData["Title"] = $"Test Attempt {Model.Name}";
+    ViewData["Title"] = Model.Attempt.Name;
 }
 
-<h1>Test Attempt @Model.Name</h1>
+<div class="page-header">
+    <h1>Тест @Model.TestName - @Model.Attempt.Name</h1>
+</div>
 
-<table class="questions-table">
-    @foreach (var answerHistoryData in Model.AnswerHistoryData)
+@foreach (var answerHistoryData in Model.Attempt.AnswerHistoryData)
     {
-            <tr class="question-container">
-                <td>
-                    <p class="question-content">@answerHistoryData.Question.Content</p>
-                </td>
-            </tr>
-
-         foreach (var answer in answerHistoryData.Question.Answers)
-         {
-            <tr class="answer">
-                @if (!answerHistoryData.AnswerHistories.Any(x => x.AnswerId == answer.Id))
-                {
-                    <td class="answer-content">
-                        @answer.Content
-                    </td>
-                    <td class="answer-result">
-                        False
-                    </td>
-                    <td class="answer-score">
-                        0
-                    </td>
-                }
-                else
-                {
-                    var answerHistory = answerHistoryData.AnswerHistories.FirstOrDefault(x => x.AnswerId == answer.Id);
-
-                    if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@answerHistoryData.Question.Content</h5>
+        <div class="card-text">
+            @foreach (var answer in answerHistoryData.Question.Answers)
                     {
-                        <td class="answer-content">
-                            @answerHistory.TextInput
-                        </td>
-                    }
-                    else
-                    {
-                        <td class="answer-content">
-                            @answer.Content
-                        </td>
-                    }
+                        if (answerHistoryData.AnswerHistories.All(x => x.AnswerId != answer.Id))
+                         {
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        @answer.Content
+                                    </div>
+                                    <div class="col"></div>
+                                </div>
+                            </div>
+                         }
+                        else
+                        {
+                            var answerHistory = answerHistoryData.AnswerHistories.FirstOrDefault(x => x.AnswerId == answer.Id);
 
-                    <td class="answer-result">
-                        @answerHistory.IsCorrect
-                    </td>
-                    <td class="answer-score">
-                        @answerHistory.NumberOfPoints
-                    </td>
-                }
-            </tr>
-         }
+                            <div class="container">
+                                <div class="row">
+                                    @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
+                                    {
+                                        <div class="col">
+                                            @answerHistory.TextInput
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col">
+                                            @answer.Content
+                                        </div>
+                                    }
+
+                                    @if (answerHistory.IsCorrect)
+                                    {
+                                        <div class="col">
+                                            <img src="~/icons/correct.svg" height="20px" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col">
+                                            <img src="~/icons/wrong.svg" height="20px" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+        </div>
+    </div>
+</div>
     }
-</table>
-

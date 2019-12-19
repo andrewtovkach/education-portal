@@ -68,3 +68,17 @@ body {
 table tbody td {
     text-align: center;
 }
+
+.card {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.finish-test-container {
+    display: flex;
+    justify-content: center;
+}
+
+.text-input {
+    width: 60%
+}

@@ -22,12 +22,16 @@ namespace EducationPortal.Web.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<EducationMaterial>()
+            modelBuilder.Entity<Module>()
                 .HasOne(c => c.Course)
+                .WithMany(c => c.Modules);
+
+            modelBuilder.Entity<EducationMaterial>()
+                .HasOne(c => c.Module)
                 .WithMany(c => c.EducationMaterials);
 
             modelBuilder.Entity<Test>()
-                .HasOne(c => c.Course)
+                .HasOne(c => c.Module)
                 .WithMany(c => c.Tests);
 
             modelBuilder.Entity<Question>()

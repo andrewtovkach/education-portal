@@ -1,6 +1,6 @@
 ﻿@model CourseDetailsViewModel
 @{
-    ViewData["Title"] = $"Course {Model.CourseName}";
+    ViewData["Title"] = $"Курс {Model.CourseName}";
 }
 
 <div class="page-header">
@@ -8,38 +8,78 @@
     <br />
 </div>
 
+<ul class="nav nav-tabs">
+    @foreach (var module in Model.Modules)
+        {
+            <li class="nav-item">
+                @if (module.Id == Model.ActiveModuleId)
+                        {
+                            <a class="nav-link active" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
+                        }
+                        else
+                        {
+                            <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
+                        }
+            </li>
+        }
+</ul>
+<br />
+
+<h3>Образовательные материалы</h3>
+
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">Имя теста</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Важность</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var educationMaterial in Model.EducationMaterials)
+        {
+            <tr scope="row">
+                <td>@educationMaterial.Name</td>
+                <td><img src="~/icons/@educationMaterial.ImportanceIconName" height="30px" /></td>
+                <td><a class="btn btn-primary" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">Открыть</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Тесты</h3>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Имя</th>
             <th scope="col">Временные ограничения</th>
             <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var test in Model.Tests)
-{
-        <tr scope="row">
-            <td>@test.Name</td>
-            <td>@test.TimeLimit минут</td>
-            <td>
-                <a class="btn btn-default" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Id">Открыть</a>
-            </td>
-        </tr>
-}
+        {
+                <tr scope="row">
+                    <td>@test.Test.Name</td>
+                    <td>@test.Test.TimeLimit минут</td>
+                    <td>
+                        @if (!test.HasCompletions)
+                        {
+                            <a class="btn btn-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пересдать</a>
+                        }
+
+                        @if (test.HasCompletions)
+                        {
+                            <a class="btn btn-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Попытки</a>
+                        }
+                    </td>
+                </tr>
+        }
     </tbody>
-</table>
-
-<h3>Education materials</h3>
-
-<table class="education-materials-table">
-    @foreach (var educationMaterial in Model.EducationMaterials)
-    {
-    <tr class="education-material">
-        <td>@educationMaterial.Name</td>
-        <td>@educationMaterial.MaterialImportance.ToString()</td>
-        <td><a class="btn btn-default" asp-controller="Courses" asp-action="GetEducationFileContent" asp-route-id="@educationMaterial.Id">View</a></td>
-    </tr>
-    }
 </table>
 

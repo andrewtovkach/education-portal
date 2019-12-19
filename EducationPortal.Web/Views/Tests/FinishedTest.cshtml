@@ -1,20 +1,35 @@
 ﻿@model FinishedTestViewModel
 @{
-    ViewData["Title"] = $"Finished Test {Model.TestName}";
+    ViewData["Title"] = $"Тест {Model.TestName}";
 }
 
-<h1>Finished Test @Model.TestName</h1>
+<div class="page-header">
+    <h1>Тест @Model.TestName</h1>
+    <br />
+</div>
 
-<table class="attempts-table">
-    @foreach (var attempt in Model.Attempts)
-    {
-        <tr class="attempt">
-            <td>@attempt.Name</td>
-            <td>@attempt.Date</td>
-            <td>@attempt.Score</td>
-            <td><a class="btn btn-default" asp-controller="Tests" asp-action="TestAttempt" asp-route-id="@attempt.Id">Open</a></td>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Имя</th>
+            <th scope="col">Дата</th>
+            <th scope="col">Очки</th>
+            <th scope="col"></th>
         </tr>
-    }
+    </thead>
+    <tbody>
+        @foreach (var attempt in Model.Attempts)
+        {
+                <tr score="row">
+                    <td>@attempt.Name</td>
+                    <td>@attempt.Date</td>
+                    <td>@attempt.Score</td>
+                    <td>
+                        <a class="btn btn-primary" asp-controller="Tests" asp-action="TestAttempt" asp-route-id="@attempt.Id">Открыть</a>
+                    </td>
+                </tr>
+        }
+    </tbody>
 </table>
 
 

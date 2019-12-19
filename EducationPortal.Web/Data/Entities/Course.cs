@@ -9,8 +9,7 @@ namespace EducationPortal.Web.Data.Entities
         public string Name { get; set; }
         public int TrainingHours { get; set; }
         public CourseComplexity CourseComplexity { get; set; }
-        public ICollection<EducationMaterial> EducationMaterials { get; set; }
-        public ICollection<Test> Tests { get; set; }
+        public ICollection<Module> Modules { get; set; }
 
         public string ComplexityIconName
         {

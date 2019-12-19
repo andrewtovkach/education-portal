@@ -2,7 +2,7 @@
 @model IEnumerable<Course>
 
 @{
-    ViewData["Title"] = "Courses";
+    ViewData["Title"] = "Курсы";
 }
 
 <div class="page-header">
@@ -13,9 +13,9 @@
 <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">Имя курса</th>
-            <th scope="col">Кол-во уч. часов</th>
-            <th scope="col">Сложность курса</th>
+            <th scope="col">Имя</th>
+            <th scope="col">Учебные часы</th>
+            <th scope="col">Сложность</th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -29,7 +29,7 @@
                 <img src="~/icons/@course.ComplexityIconName" height="30px" />
             </td>
             <td>
-                <a class="btn btn-default" asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">Открыть</a>
+                <a class="btn btn-primary" asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">Открыть</a>
             </td>
         </tr>
         }

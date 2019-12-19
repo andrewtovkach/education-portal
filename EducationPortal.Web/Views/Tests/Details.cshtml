@@ -1,47 +1,55 @@
 ﻿@using EducationPortal.Web.Data.Enums
 @model TestDetailsViewModel
 @{
-    ViewData["Title"] = $"Test {Model.TestName}";
+    ViewData["Title"] = $"Тест {Model.TestName}";
 }
 
-<h1>Test @Model.TestName</h1>
+<div class="page-header">
+    <h1>Тест @Model.TestName</h1>
+</div>
 
-<form method="post" action="~/Tests/FinishTest/@Model.TestId">
-    <table class="questions-table">
-        @foreach (var question in Model.Questions)
-        {
-            <tr class="question-container">
-                <td>
-                    <p class="question-content">@question.Content</p>
-
+<form method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
+    @foreach (var question in Model.Questions)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@question.Content</h5>
+                <div class="card-text">
                     @foreach (var answer in question.Answers)
                     {
-                        <p class="answer">
-                            @switch (question.QuestionType)
-                            {
-                                case QuestionType.OneAnswer:
-                                    <input name="@question.Id" type="radio" value="@answer.Id"/>@answer.Content<br/>
-                                    break;
-                                case QuestionType.MultipleAnswers:
-                                    <input name="@question.Id" type="checkbox" value="@answer.Id"/>
-                                    @answer.Content<br/>
-                                    break;
-                                case QuestionType.TextInput:
-                                    <input name="@question.Id" type="text"/>
-                                    break;
-                            }
-                        </p>
+                        switch (question.QuestionType)
+                        {
+                            case QuestionType.OneAnswer:
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="@question.Id" value="@answer.Id">
+                                    <label class="form-check-label" for="@question.Id">
+                                        @answer.Content
+                                    </label>
+                                </div>
+                                break;
+                            case QuestionType.MultipleAnswers:
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="@question.Id" value="@answer.Id">
+                                    <label class="form-check-label" for="@question.Id">
+                                        @answer.Content
+                                    </label>
+                                </div>
+                                break;
+                            case QuestionType.TextInput:
+                                <div class="form-group">
+                                    <label for="@question.Id" class="sr-only">Ответ</label>
+                                    <input type="text" class="form-control text-input" name="@question.Id" placeholder="Введите ответ">
+                                </div>
+                                break;
+                        }
                     }
-                </td>
-            </tr>
-        }
+                </div>
+            </div>
+        </div>
+    }
 
-        <tr>
-            <td>
-                <input type="submit" value="Send"/>
-            </td>
-        </tr>
-
-    </table>
+    <div class="finish-test-container">
+        <input type="submit" value="Закончить тест" class="btn btn-primary send-test-button" />
+    </div>
 </form>
 

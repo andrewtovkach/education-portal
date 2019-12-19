@@ -33,7 +33,7 @@ namespace EducationPortal.Web.Controllers
                 .ThenInclude(x => x.Answers)
                 .FirstOrDefault();
 
-            if (test == null)
+            if (test == null || test.Questions.Count == 0)
             {
                 return NotFound();
             }
@@ -64,7 +64,7 @@ namespace EducationPortal.Web.Controllers
             AddAnswerHistoryData(test, form, attemptId);
             UpdateTotalScore(test, attemptId);
 
-            return RedirectToAction("FinishedTest", new { id });
+            return RedirectToAction("TestAttempt", new { id = attemptId });
         }
 
         public IActionResult FinishedTest(int id)
@@ -106,13 +106,30 @@ namespace EducationPortal.Web.Controllers
                 .Include(x => x.AnswerHistoryData)
                 .ThenInclude(x => x.Question)
                 .ThenInclude(x => x.Answers)
+                .Include(x => x.TestCompletion)
                 .FirstOrDefault();
 
-            return View(attempt);
+            if (attempt == null)
+            {
+                return NotFound();
+            }
+
+            var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == attempt.TestCompletion.TestId);
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            var attemptViewModel = new AttemptViewModel
+            {
+                TestName = test.Name,
+                Attempt = attempt
+            };
+
+            return View(attemptViewModel);
         }
 
         #region Private Methods
-
         private void UpdateTotalScore(Test test, int attemptId)
         {
             var totalScore = GetTotalScore(test);
@@ -135,7 +152,7 @@ namespace EducationPortal.Web.Controllers
                 var newAttempt = new Attempt
                 {
                     Date = DateTime.Now,
-                    Name = "Attempt #1"
+                    Name = "Попытка 1"
                 };
 
                 _educationPortalDbContext.TestCompletions.Add(new TestCompletion
@@ -166,7 +183,7 @@ namespace EducationPortal.Web.Controllers
                 var newAttempt = new Attempt
                 {
                     Date = DateTime.Now,
-                    Name = $"Attempt #{testCompletion.Attempts.Count() + 1}"
+                    Name = $"Попытка {testCompletion.Attempts.Count() + 1}"
                 };
 
                 testCompletion.Attempts.Add(newAttempt);
@@ -262,7 +279,6 @@ namespace EducationPortal.Web.Controllers
 
             return totalScore;
         }
-
         #endregion
     }
 }

@@ -1,7 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using EducationPortal.Web.Data;
+using EducationPortal.Web.Data.Entities;
 using EducationPortal.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +15,13 @@ namespace EducationPortal.Web.Controllers
     public class CoursesController : Controller
     {
         private readonly EducationPortalDbContext _educationPortalDbContext;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CoursesController(EducationPortalDbContext educationPortalDbContext)
+        public CoursesController(EducationPortalDbContext educationPortalDbContext,
+            UserManager<IdentityUser> userManager)
         {
             _educationPortalDbContext = educationPortalDbContext;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -22,11 +29,13 @@ namespace EducationPortal.Web.Controllers
             return View(_educationPortalDbContext.Courses);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, int? moduleId)
         {
             var course = _educationPortalDbContext.Courses.Where(c => c.Id == id)
-                .Include(c => c.EducationMaterials)
-                .Include(c => c.Tests)
+                .Include(c => c.Modules)
+                .ThenInclude(c => c.EducationMaterials)
+                .Include(c => c.Modules)
+                .ThenInclude(c => c.Tests)
                 .FirstOrDefault();
 
             if (course == null)
@@ -34,17 +43,41 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
+            if (!moduleId.HasValue)
+            {
+                var firstModule = course.Modules.FirstOrDefault();
+
+                if (firstModule == null)
+                {
+                    return NotFound();
+                }
+
+                moduleId = firstModule.Id;
+            }
+
+            var currentModule = course.Modules.FirstOrDefault(x => x.Id == moduleId);
+
+            if (currentModule == null)
+            {
+                return NotFound();
+            }
+
+            var testsCollection = GetTestViewModels(currentModule);
+
             var courseDetailsViewModel = new CourseDetailsViewModel
             {
+                CourseId = course.Id,
                 CourseName = course.Name,
-                EducationMaterials = course.EducationMaterials,
-                Tests = course.Tests
+                Modules = course.Modules,
+                Tests = testsCollection,
+                EducationMaterials = currentModule.EducationMaterials,
+                ActiveModuleId = moduleId.Value
             };
 
             return View(courseDetailsViewModel);
         }
 
-        public IActionResult GetEducationFileContent(int? id)
+        public IActionResult EducationFileContent(int id)
         {
             var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
 
@@ -55,5 +88,26 @@ namespace EducationPortal.Web.Controllers
 
             return new FileContentResult(educationMaterial.Data, educationMaterial.ContentType);
         }
+
+        #region Private Methods
+        private IList<TestViewModel> GetTestViewModels(Module currentModule)
+        {
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+            var testsCollection = new List<TestViewModel>();
+
+            foreach (var test in currentModule.Tests)
+            {
+                testsCollection.Add(new TestViewModel
+                {
+                    HasCompletions =
+                        _educationPortalDbContext.TestCompletions.Any(
+                            x => x.UserId == Guid.Parse(userId) && x.TestId == test.Id),
+                    Test = test
+                });
+            }
+
+            return testsCollection;
+        }
+        #endregion
     }
 }

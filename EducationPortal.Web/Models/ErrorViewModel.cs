@@ -1,5 +1,3 @@
-using System;
-
 namespace EducationPortal.Web.Models
 {
     public class ErrorViewModel
