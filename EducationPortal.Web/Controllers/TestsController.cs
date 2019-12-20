@@ -47,6 +47,7 @@ namespace EducationPortal.Web.Controllers
                 Questions = questionViewModels,
                 TestName = test.Name,
                 TestId = test.Id,
+                TimeToFinish = DateTime.Now.AddMinutes(test.TimeLimit),
                 CourseId = test.Module.CourseId,
                 CourseName = test.Module.Course.Name
             };
@@ -148,7 +149,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         #region Private Methods
-        private static IList<QuestionViewModel> GetQuestionViewModels(Test test)
+        private static IEnumerable<QuestionViewModel> GetQuestionViewModels(Test test)
         {
             var questionViewModels = new List<QuestionViewModel>();
             var questionNumber = 1;
@@ -168,6 +169,7 @@ namespace EducationPortal.Web.Controllers
 
         private void UpdateTotalScore(Test test, int attemptId)
         {
+            var score = GetScore(test);
             var totalScore = GetTotalScore(test);
 
             var currentAttempt = _educationPortalDbContext.Attempts.FirstOrDefault(x => x.Id == attemptId);
@@ -176,7 +178,7 @@ namespace EducationPortal.Web.Controllers
                 return;
             }
 
-            currentAttempt.Score = totalScore;
+            currentAttempt.Score = (int)((double)score / totalScore * 100.0);
 
             _educationPortalDbContext.SaveChanges();
         }
@@ -247,8 +249,7 @@ namespace EducationPortal.Web.Controllers
                         return new AnswerHistory
                         {
                             AnswerId = Convert.ToInt32(x),
-                            IsCorrect = answer.IsCorrect,
-                            NumberOfPoints = answer.IsCorrect ? answer.NumberOfPoints : 0
+                            IsCorrect = answer.IsCorrect
                         };
                     });
 
@@ -281,8 +282,7 @@ namespace EducationPortal.Web.Controllers
                             {
                                 AnswerId = answer.Id,
                                 TextInput = textInput,
-                                IsCorrect = textInput == answer.Content,
-                                NumberOfPoints = textInput == answer.Content ? answer.NumberOfPoints : 0
+                                IsCorrect = textInput == answer.Content
                             }
                         }
                     });
@@ -292,28 +292,19 @@ namespace EducationPortal.Web.Controllers
             _educationPortalDbContext.SaveChanges();
         }
 
-        private int GetTotalScore(Test test)
+        private int GetScore(Test test)
         {
-            var totalScore = 0;
-
-            foreach (var question in test.Questions)
-            {
-                var answerHistoryData = _educationPortalDbContext.AnswerHistoryData
-                    .Where(x => x.QuestionId == question.Id)
+            return test.Questions.Select(question => _educationPortalDbContext.AnswerHistoryData.Where(x => x.QuestionId == question.Id)
                     .OrderByDescending(x => x.Date)
                     .Include(x => x.AnswerHistories)
-                    .FirstOrDefault();
+                    .FirstOrDefault())
+                .Where(answerHistoryData => answerHistoryData != null)
+                .Sum(answerHistoryData => answerHistoryData.AnswerHistories.Count(x => x.IsCorrect));
+        }
 
-                if (answerHistoryData == null)
-                {
-                    continue;
-                }
-
-                var questionScore = answerHistoryData.AnswerHistories.Sum(x => x.NumberOfPoints);
-                totalScore += questionScore;
-            }
-
-            return totalScore;
+        private static int GetTotalScore(Test test)
+        {
+            return test.Questions.Sum(question => question.Answers.Count(x => x.IsCorrect));
         }
         #endregion
     }

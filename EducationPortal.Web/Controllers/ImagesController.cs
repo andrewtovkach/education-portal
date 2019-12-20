@@ -6,17 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EducationPortal.Web.Controllers
 {
-    public class EducationMaterialsController : Controller
+    public class ImagesController : Controller
     {
         private readonly EducationPortalDbContext _educationPortalDbContext;
 
-        public EducationMaterialsController(EducationPortalDbContext educationPortalDbContext)
+        public ImagesController(EducationPortalDbContext educationPortalDbContext)
         {
             _educationPortalDbContext = educationPortalDbContext;
         }
 
         [HttpPost]
-        public IActionResult UploadEducationMaterial([FromForm]IFormFile file, int id)
+        public IActionResult UploadImage([FromForm]IFormFile file, int id)
         {
             if (file == null || file.Length == 0)
             {
@@ -28,16 +28,16 @@ namespace EducationPortal.Web.Controllers
             {
                 file.CopyTo(ms);
                 var fileBytes = ms.ToArray();
-                var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
+                var question = _educationPortalDbContext.Questions.FirstOrDefault(x => x.Id == id);
 
-                if (educationMaterial == null)
+                if (question == null)
                 {
                     ModelState.AddModelError("id", "Id is incorrect");
-                    return BadRequest(ModelState);
+                    return BadRequest();
                 }
 
-                educationMaterial.Data = fileBytes;
-                educationMaterial.ContentType = file.ContentType;
+                question.Image = fileBytes;
+                question.ImageContentType = file.ContentType;
 
                 _educationPortalDbContext.SaveChanges();
             }

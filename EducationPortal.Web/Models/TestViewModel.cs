@@ -7,5 +7,6 @@ namespace EducationPortal.Web.Models
         public Test Test { get; set; }
         public bool HasTestCompletions { get; set; }
         public int AttemptsCount { get; set; }
+        public double? AverageScore { get; set; }
     }
 }

@@ -17,7 +17,12 @@
     <hr/>
 </div>
 
-<form method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
+<div class="time-limit-container">
+    <div></div>
+    <h5 id="timer"></h5>
+</div>
+
+<form id="test-form" method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
     @foreach (var question in Model.Questions)
     {
         <div class="card">
@@ -27,21 +32,33 @@
 
                     <div class="card-header">
                         <div class="float-right">
-                            <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="Допустим только один вариант ответа"/>
+                            <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="@TestDetailsViewModel.OneAnswerTitle"/>
                         </div>
                         <h5>@(question.QuestionNumber). @question.Question.Content</h5>
+                        @if (question.Question.Image != null)
+                        {
+                            <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
+                        }
                     </div>
                     break;
                 case QuestionType.MultipleAnswers:
                     <div class="card-header">
                         <div class="float-right">
-                            <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="Допустимо несколько вариантов ответа"/>
+                            <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="@TestDetailsViewModel.MultipleAnswersTitle"/>
                         </div>
                         <h5>@(question.QuestionNumber). @question.Question.Content</h5>
+                        @if (question.Question.Image != null)
+                        {
+                            <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
+                        }
                     </div>
                     break;
                 case QuestionType.TextInput:
                     <h5 class="card-header">@(question.QuestionNumber). @question.Question.Content</h5>
+                     if (question.Question.Image != null)
+                     {
+                         <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
+                     }
                     break;
             }
             <div class="card-body">
@@ -80,7 +97,7 @@
     }
 
     <div class="finish-test-container">
-        <input type="submit" value="Закончить тест" class="btn btn-primary send-test-button" />
+        <input type="submit" value="Закончить тест" class="btn btn-primary" />
     </div>
 </form>
 
@@ -89,6 +106,17 @@
     <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
+
+            $("#timer")
+                .countdown("@Model.TimeToFinish", function (event) {
+                    if (event.type === "finish") {
+                        $("#test-form").submit();
+                    } else {
+                        $(this).text(
+                            event.strftime('%H:%M:%S')
+                        );
+                    }
+                });
         })
     </script>
 }

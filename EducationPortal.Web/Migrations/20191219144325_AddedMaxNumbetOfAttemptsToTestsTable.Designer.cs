@@ -4,14 +4,16 @@ using EducationPortal.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EducationPortal.Web.Migrations
 {
     [DbContext(typeof(EducationPortalDbContext))]
-    partial class EducationPortalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191219144325_AddedMaxNumbetOfAttemptsToTestsTable")]
+    partial class AddedMaxNumbetOfAttemptsToTestsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,6 +30,8 @@ namespace EducationPortal.Web.Migrations
                     b.Property<string>("Content");
 
                     b.Property<bool>("IsCorrect");
+
+                    b.Property<int>("NumberOfPoints");
 
                     b.Property<int>("QuestionId");
 
@@ -49,6 +53,8 @@ namespace EducationPortal.Web.Migrations
                     b.Property<int>("AnswerId");
 
                     b.Property<bool>("IsCorrect");
+
+                    b.Property<int>("NumberOfPoints");
 
                     b.Property<string>("TextInput");
 
@@ -169,8 +175,6 @@ namespace EducationPortal.Web.Migrations
                     b.Property<string>("Content");
 
                     b.Property<byte[]>("Image");
-
-                    b.Property<string>("ImageContentType");
 
                     b.Property<int>("QuestionType");
 

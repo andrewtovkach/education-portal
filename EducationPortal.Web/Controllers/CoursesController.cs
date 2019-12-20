@@ -36,6 +36,7 @@ namespace EducationPortal.Web.Controllers
                 .ThenInclude(c => c.EducationMaterials)
                 .Include(c => c.Modules)
                 .ThenInclude(c => c.Tests)
+                .ThenInclude(x => x.Questions)
                 .FirstOrDefault();
 
             if (course == null)
@@ -90,7 +91,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         #region Private Methods
-        private IList<TestViewModel> GetTestViewModels(Module currentModule)
+        private IEnumerable<TestViewModel> GetTestViewModels(Module currentModule)
         {
             var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
             var testsCollection = new List<TestViewModel>();
@@ -107,6 +108,7 @@ namespace EducationPortal.Web.Controllers
                 if (hasTestCompletions)
                 {
                     testViewModel.AttemptsCount = testCompletion.Attempts.Count;
+                    testViewModel.AverageScore = testCompletion.Attempts.Average(x => x.Score);
                 }
 
                 testsCollection.Add(testViewModel);

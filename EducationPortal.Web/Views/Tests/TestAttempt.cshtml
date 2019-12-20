@@ -15,7 +15,7 @@
 </nav>
 
 <div class="page-header">
-    <h1>Тест @Model.TestName - @Model.Attempt.Name</h1>
+    <h1>Тест @Model.TestName - @Model.Attempt.Name - результат @(Model.Attempt.Score)%</h1>
     <hr/>
 </div>
 
@@ -77,3 +77,7 @@
         </div>
 </div>
     }
+
+<div class="finish-test-container">
+    <a class="btn btn-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@Model.TestId">Пересдать тест</a>
+</div>

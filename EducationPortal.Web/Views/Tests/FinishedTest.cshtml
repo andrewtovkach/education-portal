@@ -31,7 +31,7 @@
                 <tr score="row">
                     <td>@attempt.Name</td>
                     <td>@attempt.Date</td>
-                    <td>@attempt.Score</td>
+                    <td>@(attempt.Score)%</td>
                     <td>
                         <a class="btn btn-primary" asp-controller="Tests" asp-action="TestAttempt" asp-route-id="@attempt.Id">Открыть</a>
                     </td>

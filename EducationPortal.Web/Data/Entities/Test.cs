@@ -8,6 +8,7 @@ namespace EducationPortal.Web.Data.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         public int TimeLimit { get; set; }
+        public int MaxNumberOfAttempts { get; set; }
         public int ModuleId { get; set; }
         public Module Module { get; set; }
         public ICollection<Question> Questions { get; set; }

@@ -60,7 +60,10 @@
     <thead class="thead-light">
         <tr>
             <th scope="col">Имя</th>
+            <th scope="col">Кол-во вопросов</th>
             <th scope="col">Временные ограничения</th>
+            <th scope="col">Кол-во попыток</th>
+            <th scope="col">Средний результат</th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -69,20 +72,51 @@
         {
                 <tr scope="row">
                     <td>@test.Test.Name</td>
+                    <td>@(test.Test.Questions?.Count ?? 0)</td>
                     <td>@test.Test.TimeLimit минут</td>
+                    <td>
+                        <span class="badge badge-primary">@test.AttemptsCount / @test.Test.MaxNumberOfAttempts</span>
+                    </td>
+                    <td>
+                        @if (!test.AverageScore.HasValue)
+                        {
+                            <b>-</b>
+                        }
+                        else
+                        {
+                             if (test.AverageScore > 50)
+                             {
+                                 <span class="badge badge-success">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                             }
+                            else if (test.AverageScore > 20)
+                            {
+                                <span class="badge badge-warning">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                            }
+                        }
+                    </td>
                     <td>
                         @if (test.HasTestCompletions)
                         {
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Действия
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пересдать</a>
-                                    <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Попытки 
-                                        <span class="badge badge-light">@test.AttemptsCount</span></a>
-                                </div>
-                            </div>
+                             if (test.AttemptsCount < test.Test.MaxNumberOfAttempts)
+                             {
+                                 <div class="dropdown">
+                                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                         Действия
+                                     </button>
+                                     <div class="dropdown-menu">
+                                         <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пересдать</a>
+                                         <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Попытки</a>
+                                     </div>
+                                 </div>
+                             }
+                             else
+                             {
+                                 <a class="btn btn-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Попытки</a>
+                             }
 
                         }
                         else
