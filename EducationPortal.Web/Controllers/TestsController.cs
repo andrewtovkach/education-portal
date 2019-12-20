@@ -50,7 +50,11 @@ namespace EducationPortal.Web.Controllers
                 TestId = test.Id,
                 TimeToFinish = DateTime.Now.AddMinutes(test.TimeLimit),
                 CourseId = test.Module.CourseId,
-                CourseName = test.Module.Course.Name
+                CourseName = test.Module.Course.Name,
+                ModuleId = test.ModuleId,
+                ModuleName = test.Module.Name,
+                Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == test.ModuleId),
+                EducationMaterials = _educationPortalDbContext.EducationMaterials.Where(x => x.ModuleId == test.ModuleId)
             };
 
             return View(testDetailsViewModel);
@@ -98,12 +102,21 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
+            var testCompletions = _educationPortalDbContext.TestCompletions
+                .Include(x => x.Test)
+                .Where(x => x.UserId == Guid.Parse(userId) && x.Test.ModuleId == test.ModuleId);
+
             var finishedTestViewModel = new FinishedTestViewModel
             {
+                TestId = test.Id,
                 TestName = test.Name,
                 Attempts = testCompletion.Attempts.OrderByDescending(x => x.Date),
                 CourseName = test.Module.Course.Name,
-                CourseId = test.Module.Course.Id
+                CourseId = test.Module.Course.Id,
+                ModuleId = test.ModuleId,
+                ModuleName = test.Module.Name,
+                Tests = testCompletions.Select(x => x.Test),
+                EducationMaterials = _educationPortalDbContext.EducationMaterials.Where(x => x.ModuleId == test.ModuleId)
             };
 
             return View(finishedTestViewModel);
@@ -137,13 +150,28 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+            var testCompletion = _educationPortalDbContext.TestCompletions
+                .Where(x => x.TestId == test.Id && x.UserId == Guid.Parse(userId))
+                .Include(x => x.Attempts)
+                .FirstOrDefault();
+
+            if (testCompletion == null)
+            {
+                return NotFound();
+            }
+
             var attemptViewModel = new AttemptViewModel
             {
                 TestName = test.Name,
                 TestId = test.Id,
                 Attempt = attempt,
                 CourseName = test.Module.Course.Name,
-                CourseId = test.Module.CourseId
+                CourseId = test.Module.CourseId,
+                ModuleId = test.ModuleId,
+                ModuleName = test.Module.Name,
+                Attempts = testCompletion.Attempts.OrderByDescending(x => x.Date),
+                MaxNumberOfAttempts = test.MaxNumberOfAttempts
             };
 
             return hasNotification ? View(attemptViewModel).WithSuccess("", "Тест был завершен!") : View(attemptViewModel);
@@ -191,7 +219,7 @@ namespace EducationPortal.Web.Controllers
                 var newAttempt = new Attempt
                 {
                     Date = DateTime.Now,
-                    Name = "Попытка 1"
+                    Name = "Результат 1"
                 };
 
                 _educationPortalDbContext.TestCompletions.Add(new TestCompletion
@@ -222,7 +250,7 @@ namespace EducationPortal.Web.Controllers
                 var newAttempt = new Attempt
                 {
                     Date = DateTime.Now,
-                    Name = $"Попытка {testCompletion.Attempts.Count() + 1}"
+                    Name = $"Результат {testCompletion.Attempts.Count() + 1}"
                 };
 
                 testCompletion.Attempts.Add(newAttempt);
@@ -254,13 +282,14 @@ namespace EducationPortal.Web.Controllers
                         };
                     });
 
-                    _educationPortalDbContext.AnswerHistoryData.Add(new AnswerHistoryData
-                    {
-                        AttemptId = attemptId,
-                        Date = DateTime.Now,
-                        QuestionId = question.Id,
-                        AnswerHistories = answerHistories.ToList()
-                    });
+
+                     _educationPortalDbContext.AnswerHistoryData.Add(new AnswerHistoryData
+                     {
+                         AttemptId = attemptId,
+                         Date = DateTime.Now,
+                         QuestionId = question.Id,
+                         AnswerHistories = answerHistories.ToList()
+                     });
                 }
                 else
                 {
@@ -272,20 +301,26 @@ namespace EducationPortal.Web.Controllers
                     }
 
                     var textInput = form[question.Id.ToString()];
+                    var answerHistories = new List<AnswerHistory>
+                    {
+                        new AnswerHistory
+                        {
+                            AnswerId = answer.Id,
+                            IsCorrect = !string.IsNullOrEmpty(textInput) && textInput == answer.Content
+                        }
+                    };
+
+                    if (!string.IsNullOrEmpty(textInput))
+                    {
+                        answerHistories.First().TextInput = textInput;
+                    }
+
                     _educationPortalDbContext.AnswerHistoryData.Add(new AnswerHistoryData
                     {
                         AttemptId = attemptId,
                         Date = DateTime.Now,
                         QuestionId = question.Id,
-                        AnswerHistories = new List<AnswerHistory>
-                        {
-                            new AnswerHistory
-                            {
-                                AnswerId = answer.Id,
-                                TextInput = textInput,
-                                IsCorrect = textInput == answer.Content
-                            }
-                        }
+                        AnswerHistories = answerHistories
                     });
                 }
             }

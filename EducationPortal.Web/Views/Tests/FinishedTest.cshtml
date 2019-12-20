@@ -1,43 +1,68 @@
 ﻿@model FinishedTestViewModel
 @{
     ViewData["Title"] = $"Тест {Model.TestName}";
+    ViewData["ActivePage"] = Model.TestId.ToString();
 }
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
         <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Курс @Model.CourseName</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Тест @Model.TestName</li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Модуль @Model.ModuleName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Результаты теста @Model.TestName</li>
     </ol>
 </nav>
 
 <div class="page-header">
-    <h1>Тест @Model.TestName</h1>
+    <h1>Результаты теста @Model.TestName</h1>
     <hr />
 </div>
 
-<table class="table">
-    <thead class="thead-light">
-        <tr>
-            <th scope="col">Имя</th>
-            <th scope="col">Дата</th>
-            <th scope="col">Очки</th>
-            <th scope="col"></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var attempt in Model.Attempts)
-        {
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_FinishedTestsNav", Model.Tests)
+    </div>
+    <div class="col-md-9">
+        <table class="table">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Дата</th>
+                <th scope="col">Результат</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var attempt in Model.Attempts)
+            {
                 <tr score="row">
                     <td>@attempt.Name</td>
                     <td>@attempt.Date</td>
-                    <td>@(attempt.Score)%</td>
+                    @if (attempt.Score > 50)
+                    {
+                        <td>
+                            <span class="badge badge-success">@(attempt.Score)%</span>
+                        </td>
+                    }
+                    else if (attempt.Score > 20)
+                    {
+                        <td>
+                            <span class="badge badge-warning">@(attempt.Score)%</span>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            <span class="badge badge-danger">@(attempt.Score)%</span>
+                        </td>
+                    }
                     <td>
                         <a class="btn btn-primary" asp-controller="Tests" asp-action="TestAttempt" asp-route-id="@attempt.Id">Открыть</a>
                     </td>
                 </tr>
-        }
-    </tbody>
-</table>
-
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
 

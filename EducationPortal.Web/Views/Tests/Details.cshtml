@@ -2,12 +2,14 @@
 @model TestDetailsViewModel
 @{
     ViewData["Title"] = $"Тест {Model.TestName}";
+    ViewData["ActivePage"] = Model.TestId.ToString();
 }
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
         <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Курс @Model.CourseName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Модуль @Model.ModuleName</a></li>
         <li class="breadcrumb-item active" aria-current="page">Тест @Model.TestName</li>
     </ol>
 </nav>
@@ -17,89 +19,100 @@
     <hr/>
 </div>
 
-<div class="flex-container">
-    <div></div>
-    <h5 id="timer"></h5>
-</div>
+<div class="row">
+    <div class="col-md-3">
+        <h5>Образовательные материалы</h5>
+        @Html.Partial("_EducationMaterialsNav", Model.EducationMaterials)
 
-<form id="test-form" method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
-    @foreach (var question in Model.Questions)
-    {
-        <div class="card">
-            @switch (question.Question.QuestionType)
-            {
-                case QuestionType.OneAnswer:
-
-                    <div class="card-header">
-                        <div class="float-right">
-                            <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="@TestDetailsViewModel.OneAnswerTitle"/>
-                        </div>
-                        <h5>@(question.QuestionNumber). @question.Question.Content</h5>
-                        @if (question.Question.Image != null)
-                        {
-                            <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
-                        }
-                    </div>
-                    break;
-                case QuestionType.MultipleAnswers:
-                    <div class="card-header">
-                        <div class="float-right">
-                            <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="@TestDetailsViewModel.MultipleAnswersTitle"/>
-                        </div>
-                        <h5>@(question.QuestionNumber). @question.Question.Content</h5>
-                        @if (question.Question.Image != null)
-                        {
-                            <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
-                        }
-                    </div>
-                    break;
-                case QuestionType.TextInput:
-                    <h5 class="card-header">@(question.QuestionNumber). @question.Question.Content</h5>
-                     if (question.Question.Image != null)
-                     {
-                         <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
-                     }
-                    break;
-            }
-            <div class="card-body">
-                <div class="card-text">
-                    @foreach (var answer in question.Question.Answers)
-                    {
-                        switch (question.Question.QuestionType)
-                        {
-                            case QuestionType.OneAnswer:
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="@question.Question.Id" value="@answer.Id">
-                                    <label class="form-check-label" for="@question.Question.Id">
-                                        @answer.Content
-                                    </label>
-                                </div>
-                                break;
-                            case QuestionType.MultipleAnswers:
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="@question.Question.Id" value="@answer.Id">
-                                    <label class="form-check-label" for="@question.Question.Id">
-                                        @answer.Content
-                                    </label>
-                                </div>
-                                break;
-                            case QuestionType.TextInput:
-                                <div class="form-group">
-                                    <label for="@question.Question.Id" class="sr-only">Ответ</label>
-                                    <input type="text" class="form-control text-input" name="@question.Question.Id" placeholder="Введите ответ">
-                                </div>
-                                break;
-                        }
-                    }
-                </div>
-            </div>
-        </div>
-    }
-
-    <div class="finish-test-container">
-        <input type="submit" value="Закончить тест" class="btn btn-primary" />
+        <h5>Тесты</h5>
+        @Html.Partial("_TestsNav", Model.Tests)
     </div>
-</form>
+    <div class="col-md-9">
+        <div class="flex-container">
+            <div></div>
+            <h5 id="timer"></h5>
+        </div>
+
+        <form id="test-form" method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
+            @foreach (var question in Model.Questions)
+            {
+                <div class="card">
+                    @switch (question.Question.QuestionType)
+                    {
+                        case QuestionType.OneAnswer:
+
+                            <div class="card-header">
+                                <div class="float-right">
+                                    <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="@TestDetailsViewModel.OneAnswerTitle"/>
+                                </div>
+                                <h5>@(question.QuestionNumber). @question.Question.Content</h5>
+                                @if (question.Question.Image != null)
+                                {
+                                    <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
+                                }
+                            </div>
+                            break;
+                        case QuestionType.MultipleAnswers:
+                            <div class="card-header">
+                                <div class="float-right">
+                                    <img src="~/icons/info.svg" height="15px" data-toggle="tooltip" data-placement="right" title="@TestDetailsViewModel.MultipleAnswersTitle"/>
+                                </div>
+                                <h5>@(question.QuestionNumber). @question.Question.Content</h5>
+                                @if (question.Question.Image != null)
+                                {
+                                    <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
+                                }
+                            </div>
+                            break;
+                        case QuestionType.TextInput:
+                            <h5 class="card-header">@(question.QuestionNumber). @question.Question.Content</h5>
+                            if (question.Question.Image != null)
+                            {
+                                <img src="@question.Question.ImageSrc" class="img-fluid question-image" />
+                            }
+                            break;
+                    }
+                    <div class="card-body">
+                        <div class="card-text">
+                            @foreach (var answer in question.Question.Answers)
+                            {
+                                switch (question.Question.QuestionType)
+                                {
+                                    case QuestionType.OneAnswer:
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="@question.Question.Id" value="@answer.Id">
+                                            <label class="form-check-label" for="@question.Question.Id">
+                                                @answer.Content
+                                            </label>
+                                        </div>
+                                        break;
+                                    case QuestionType.MultipleAnswers:
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="@question.Question.Id" value="@answer.Id">
+                                            <label class="form-check-label" for="@question.Question.Id">
+                                                @answer.Content
+                                            </label>
+                                        </div>
+                                        break;
+                                    case QuestionType.TextInput:
+                                        <div class="form-group">
+                                            <label for="@question.Question.Id" class="sr-only">Ответ</label>
+                                            <input type="text" class="form-control text-input" name="@question.Question.Id" placeholder="Введите ответ">
+                                        </div>
+                                        break;
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="finish-test-container">
+                <input type="submit" value="Закончить тест" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts
 {

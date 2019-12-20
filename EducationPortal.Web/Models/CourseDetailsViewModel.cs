@@ -11,5 +11,6 @@ namespace EducationPortal.Web.Models
         public IEnumerable<EducationMaterial> EducationMaterials { get; set; }
         public IEnumerable<TestViewModel> Tests { get; set; }
         public int ActiveModuleId { get; set; }
+        public IEnumerable<Course> Courses { get; set; }
     }
 }

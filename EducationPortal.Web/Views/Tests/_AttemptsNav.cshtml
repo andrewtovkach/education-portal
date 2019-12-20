@@ -1,0 +1,11 @@
+﻿@model IEnumerable<EducationPortal.Web.Data.Entities.Attempt>
+
+<ul class="nav nav-pills flex-column">
+    @foreach (var attempt in Model)
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, attempt.Id.ToString())" asp-controller="Tests" asp-action="TestAttempt" asp-route-id="@attempt.Id">@attempt.Name</a>
+        </li>
+    }
+</ul>
+<br />

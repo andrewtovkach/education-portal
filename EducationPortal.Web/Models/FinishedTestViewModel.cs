@@ -5,9 +5,14 @@ namespace EducationPortal.Web.Models
 {
     public class FinishedTestViewModel
     {
+        public int ModuleId { get; set; }
+        public string ModuleName { get; set; }
         public int CourseId { get; set; }
         public string CourseName { get; set; }
+        public int TestId { get; set; }
         public string TestName { get; set; }
         public IEnumerable<Attempt> Attempts { get; set; }
+        public IEnumerable<Test> Tests { get; set; }
+        public IEnumerable<EducationMaterial> EducationMaterials { get; set; }
     }
 }

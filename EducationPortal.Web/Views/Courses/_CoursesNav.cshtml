@@ -1,0 +1,11 @@
+﻿@model IEnumerable<EducationPortal.Web.Data.Entities.Course>
+
+<ul class="nav nav-pills flex-column">
+    @foreach (var course in Model)
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, course.Id.ToString())" asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">Курс @course.Name</a>
+        </li>
+    }
+</ul>
+<br/>

@@ -67,6 +67,7 @@ namespace EducationPortal.Web.Controllers
 
             var courseDetailsViewModel = new CourseDetailsViewModel
             {
+                Courses = _educationPortalDbContext.Courses,
                 CourseId = course.Id,
                 CourseName = course.Name,
                 Modules = course.Modules,
