@@ -4,6 +4,7 @@ using System.Linq;
 using EducationPortal.Web.Data;
 using EducationPortal.Web.Data.Entities;
 using EducationPortal.Web.Data.Enums;
+using EducationPortal.Web.Extensions;
 using EducationPortal.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -71,7 +72,7 @@ namespace EducationPortal.Web.Controllers
             AddAnswerHistoryData(test, form, attemptId);
             UpdateTotalScore(test, attemptId);
 
-            return RedirectToAction("TestAttempt", new { id = attemptId });
+            return RedirectToAction("TestAttempt", new { id = attemptId, hasNotification = true });
         }
 
         public IActionResult FinishedTest(int id)
@@ -108,7 +109,7 @@ namespace EducationPortal.Web.Controllers
             return View(finishedTestViewModel);
         }
 
-        public IActionResult TestAttempt(int id)
+        public IActionResult TestAttempt(int id, bool hasNotification = false)
         {
             var attempt = _educationPortalDbContext.Attempts
                 .Where(x => x.Id == id)
@@ -145,7 +146,7 @@ namespace EducationPortal.Web.Controllers
                 CourseId = test.Module.CourseId
             };
 
-            return View(attemptViewModel);
+            return hasNotification ? View(attemptViewModel).WithSuccess("", "Тест был завершен!") : View(attemptViewModel);
         }
 
         #region Private Methods

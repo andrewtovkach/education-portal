@@ -15,66 +15,73 @@
 </nav>
 
 <div class="page-header">
-    <h1>Тест @Model.TestName - @Model.Attempt.Name - результат @(Model.Attempt.Score)%</h1>
-    <hr/>
+    <h1>Тест @Model.TestName - @Model.Attempt.Name</h1>
+    <hr />
+</div>
+
+@Html.Partial("_StatusMessages")
+
+<div class="flex-container">
+    <div></div>
+    <h5>Результат - @(Model.Attempt.Score)%</h5>
 </div>
 
 @foreach (var answerHistoryData in Model.Attempt.AnswerHistoryData)
     {
-   <div class="card">
-       <h5 class="card-header">@answerHistoryData.Question.Content</h5>
-       <div class="card-body">
-            <div class="card-text">
-                @foreach (var answer in answerHistoryData.Question.Answers)
+<div class="card">
+    <h5 class="card-header">@answerHistoryData.Question.Content</h5>
+    <div class="card-body">
+        <div class="card-text">
+            @foreach (var answer in answerHistoryData.Question.Answers)
                 {
                     if (answerHistoryData.AnswerHistories.All(x => x.AnswerId != answer.Id))
                     {
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            @answer.Content
-                        </div>
-                        <div class="col"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        @answer.Content
                     </div>
+                    <div class="col"></div>
                 </div>
+            </div>
                     }
                     else
                     {
                         var answerHistory = answerHistoryData.AnswerHistories.FirstOrDefault(x => x.AnswerId == answer.Id);
 
-                <div class="container">
-                    <div class="row">
-                        @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
+            <div class="container">
+                <div class="row">
+                    @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
                                 {
-                        <div class="col">
-                            @answerHistory.TextInput
-                        </div>
+                    <div class="col">
+                        @answerHistory.TextInput
+                    </div>
                                 }
                                 else
                                 {
-                        <div class="col">
-                            @answer.Content
-                        </div>
+                    <div class="col">
+                        @answer.Content
+                    </div>
                                 }
 
-                        @if (answerHistory.IsCorrect)
+                    @if (answerHistory.IsCorrect)
                                 {
-                        <div class="col">
-                            <img src="~/icons/correct.svg" height="20px" />
-                        </div>
+                    <div class="col">
+                        <img src="~/icons/correct.svg" height="20px" />
+                    </div>
                                 }
                                 else
                                 {
-                        <div class="col">
-                            <img src="~/icons/wrong.svg" height="20px" />
-                        </div>
-                                }
+                    <div class="col">
+                        <img src="~/icons/wrong.svg" height="20px" />
                     </div>
+                                }
                 </div>
+            </div>
                     }
                 }
-            </div>
         </div>
+    </div>
 </div>
     }
 

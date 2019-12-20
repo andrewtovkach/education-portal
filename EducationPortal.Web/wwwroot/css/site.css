@@ -94,7 +94,7 @@ table tbody td {
     margin-bottom: 10px;
 }
 
-.time-limit-container {
+.flex-container {
     display: flex;
     -o-justify-content: space-between;
     -webkit-justify-content: space-between;
