@@ -28,9 +28,9 @@
         @Html.Partial("_AttemptsNav", Model.Attempts)
     </div>
     <div class="col-md-9">
-        <div class="flex-container">
-            <div></div>
-            <h5>Результат - @(Model.Attempt.Score)%</h5>
+        <div class="progress">
+            <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.Attempt.Score)%" aria-valuenow="@(Model.Attempt.Score)" aria-valuemin="0" aria-valuemax="100">@(Model.Attempt.Score)%</div>
+            <div class="progress-bar bg-danger" role="progressbar" style="width: @(100 - Model.Attempt.Score)%" aria-valuenow="@(100 - Model.Attempt.Score)" aria-valuemin="0" aria-valuemax="100">@(100 - Model.Attempt.Score)%</div>
         </div>
 
         @foreach (var answerHistoryData in Model.Attempt.AnswerHistoryData)
@@ -60,49 +60,28 @@
                                     <div class="row">
                                         @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
                                         {
-                                        <div class="col">
-                                            @answerHistory.TextInput
-                                        </div>
+                                            <div class="col">
+                                                <input type="text" class="form-control text-input" value="@answerHistory.TextInput" readonly="readonly">
+                                            </div>
                                         }
                                         else
                                         {
-                                        <div class="col">
-                                            @answer.Content
-                                        </div>
+                                            <div class="col">
+                                                @answer.Content
+                                            </div>
                                         }
 
-                                        @if (answerHistory.Answer.Question.QuestionType == QuestionType.TextInput)
+                                        @if (answerHistory.IsCorrect)
                                         {
-                                            if (!string.IsNullOrEmpty(answerHistory.TextInput))
-                                            {
-                                                if (answerHistory.IsCorrect)
-                                                {
-                                                    <div class="col">
-                                                        <img src="~/icons/correct.svg" height="20px" />
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <div class="col">
-                                                        <img src="~/icons/wrong.svg" height="20px" />
-                                                    </div>
-                                                }
-                                            }
+                                            <div class="col">
+                                                <img src="~/icons/correct.svg" height="20px"/>
+                                            </div>
                                         }
                                         else
                                         {
-                                            if (answerHistory.IsCorrect)
-                                            {
-                                                <div class="col">
-                                                    <img src="~/icons/correct.svg" height="20px" />
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class="col">
-                                                    <img src="~/icons/wrong.svg" height="20px" />
-                                                </div>
-                                            }
+                                            <div class="col">
+                                                <img src="~/icons/wrong.svg" height="20px"/>
+                                            </div>
                                         }
 
                                     </div>
@@ -113,7 +92,7 @@
                 </div>
             </div>
         }
-        
+
         @if (Model.Attempts.Count() < Model.MaxNumberOfAttempts)
         {
             <div class="finish-test-container">

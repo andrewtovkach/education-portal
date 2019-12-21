@@ -104,6 +104,7 @@ namespace EducationPortal.Web.Controllers
 
             var testCompletions = _educationPortalDbContext.TestCompletions
                 .Include(x => x.Test)
+                .Include(x => x.Attempts)
                 .Where(x => x.UserId == Guid.Parse(userId) && x.Test.ModuleId == test.ModuleId);
 
             var finishedTestViewModel = new FinishedTestViewModel
@@ -115,7 +116,7 @@ namespace EducationPortal.Web.Controllers
                 CourseId = test.Module.Course.Id,
                 ModuleId = test.ModuleId,
                 ModuleName = test.Module.Name,
-                Tests = testCompletions.Select(x => x.Test),
+                TestCompletions = testCompletions,
                 EducationMaterials = _educationPortalDbContext.EducationMaterials.Where(x => x.ModuleId == test.ModuleId)
             };
 

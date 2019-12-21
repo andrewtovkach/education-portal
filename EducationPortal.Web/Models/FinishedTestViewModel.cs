@@ -12,7 +12,7 @@ namespace EducationPortal.Web.Models
         public int TestId { get; set; }
         public string TestName { get; set; }
         public IEnumerable<Attempt> Attempts { get; set; }
-        public IEnumerable<Test> Tests { get; set; }
+        public IEnumerable<TestCompletion> TestCompletions { get; set; }
         public IEnumerable<EducationMaterial> EducationMaterials { get; set; }
     }
 }

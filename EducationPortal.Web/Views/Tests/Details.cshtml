@@ -30,7 +30,7 @@
     <div class="col-md-9">
         <div class="flex-container">
             <div></div>
-            <h5 id="timer"></h5>
+            <div style="font-family: 'Roboto', sans-serif; font-size: 20px;" ><b id="timer"></b></div>
         </div>
 
         <form id="test-form" method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
@@ -74,34 +74,34 @@
                     }
                     <div class="card-body">
                         <div class="card-text">
-                            @foreach (var answer in question.Question.Answers)
-                            {
-                                switch (question.Question.QuestionType)
+                            <div class="form-group">
+                                @foreach (var answer in question.Question.Answers)
                                 {
-                                    case QuestionType.OneAnswer:
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="@question.Question.Id" value="@answer.Id">
-                                            <label class="form-check-label" for="@question.Question.Id">
-                                                @answer.Content
-                                            </label>
-                                        </div>
-                                        break;
-                                    case QuestionType.MultipleAnswers:
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="@question.Question.Id" value="@answer.Id">
-                                            <label class="form-check-label" for="@question.Question.Id">
-                                                @answer.Content
-                                            </label>
-                                        </div>
-                                        break;
-                                    case QuestionType.TextInput:
-                                        <div class="form-group">
+                                    switch (question.Question.QuestionType)
+                                    {
+                                        case QuestionType.OneAnswer:
+                                            <div class="custom-control custom-radio">
+                                                <input class="custom-control-input" type="radio" name="@question.Question.Id" value="@answer.Id">
+                                                <label class="custom-control-label" for="@question.Question.Id">
+                                                    @answer.Content
+                                                </label>
+                                            </div>
+                                            break;
+                                        case QuestionType.MultipleAnswers:
+                                            <div class="custom-control custom-checkbox">
+                                                <input class="custom-control-input" type="checkbox" name="@question.Question.Id" value="@answer.Id">
+                                                <label class="custom-control-label" for="@question.Question.Id">
+                                                    @answer.Content
+                                                </label>
+                                            </div>
+                                            break;
+                                        case QuestionType.TextInput:
                                             <label for="@question.Question.Id" class="sr-only">Ответ</label>
                                             <input type="text" class="form-control text-input" name="@question.Question.Id" placeholder="Введите ответ">
-                                        </div>
-                                        break;
+                                            break;
+                                    }
                                 }
-                            }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,6 +130,17 @@
                         );
                     }
                 });
+
+            $('.custom-control-label').click(function () {
+                var inputElement = $(this).parent().children().first();
+                var checkedAttr = inputElement.attr('checked');
+
+                if (typeof checkedAttr !== typeof undefined && checkedAttr !== false) {
+                    inputElement.removeAttr('checked');
+                } else {
+                    inputElement.attr('checked', 'checked');
+                }
+            });
         })
     </script>
 }
