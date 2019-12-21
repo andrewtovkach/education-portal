@@ -15,7 +15,7 @@ namespace EducationPortal.Web.Models
         public string ModuleName { get; set; }
         public int TestId { get; set; }
         public string TestName { get; set; }
-        public DateTime TimeToFinish { get; set; }
+        public int TimeLimit { get; set; }
         public IEnumerable<QuestionViewModel> Questions { get; set; }
         public IEnumerable<Test> Tests { get; set; }
         public IEnumerable<EducationMaterial> EducationMaterials { get; set; }

@@ -117,11 +117,15 @@
 @section Scripts
 {
     <script>
+        var addMinutesToDate =  function (dt, minutes) {
+            return new Date(dt.getTime() + minutes*60000);
+        }
+
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
 
             $("#timer")
-                .countdown("@Model.TimeToFinish", function (event) {
+                .countdown(addMinutesToDate(new Date(), @Model.TimeLimit), function (event) {
                     if (event.type === "finish") {
                         $("#test-form").submit();
                     } else {

@@ -48,7 +48,7 @@ namespace EducationPortal.Web.Controllers
                 Questions = questionViewModels,
                 TestName = test.Name,
                 TestId = test.Id,
-                TimeToFinish = DateTime.Now.AddMinutes(test.TimeLimit),
+                TimeLimit = test.TimeLimit,
                 CourseId = test.Module.CourseId,
                 CourseName = test.Module.Course.Name,
                 ModuleId = test.ModuleId,
