@@ -5,29 +5,43 @@
     ViewBag.Title = "Изменение ролей";
 }
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">Пользователи</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Изменение ролей</li>
+    </ol>
+</nav>
+
 <div class="page-header">
     <h1>Изменение ролей (@Model.UserEmail)</h1>
     <hr />
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit" method="post">
-            <input type="hidden" name="userId" value="@Model.UserId" />
-            <div class="form-group">
-                @foreach (IdentityRole role in Model.AllRoles)
-                {
-                <div class="custom-control custom-checkbox">
-                    <input class="custom-control-input" type="checkbox" name="roles" value="@role.Name"
-                           @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "")>
-                    <label class="custom-control-label" for="roles">
-                        @role.Name
-                    </label>
-                </div>
-                }
+    <div class="col-md-3">
+        @Html.Partial("../Users/_UsersNav", "Изменение ролей")
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" name="userId" value="@Model.UserId" />
+                    <div class="form-group">
+                        @foreach (IdentityRole role in Model.AllRoles)
+                        {
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" name="roles" value="@role.Name"
+                                       @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "")>
+                                <label class="custom-control-label" for="roles">
+                                    @role.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-        </form>
+        </div>
     </div>
 </div>
 

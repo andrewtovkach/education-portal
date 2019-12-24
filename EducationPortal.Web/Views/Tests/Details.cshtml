@@ -21,10 +21,27 @@
 
 <div class="row">
     <div class="col-md-3">
-        <h5>Образовательные материалы</h5>
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Модуль @Model.ModuleName</a>
+            </li>
+        </ul>
+
+        <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            <a class="nav-link" href="#" style="color: black; cursor: default;">Образовательные материалы</a>
+        </li>
+        </ul>
+
         @Html.Partial("_EducationMaterialsNav", Model.EducationMaterials)
 
-        <h5>Тесты</h5>
+
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="#" style="color: black; cursor: default;">Тесты</a>
+            </li>
+        </ul>
+
         @Html.Partial("_TestsNav", Model.Tests)
     </div>
     <div class="col-md-9">

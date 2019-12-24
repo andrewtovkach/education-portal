@@ -1,7 +1,15 @@
 ﻿@model CreateUserViewModel
 @{
     ViewBag.Title = "Добавление пользователя";
+    ViewData["ActivePage"] = "Create";
 }
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Users" asp-action="Index">Пользователи</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Добавление пользователя</li>
+    </ol>
+</nav>
 
 <div class="page-header">
     <h1>Добавление пользователя</h1>
@@ -9,22 +17,29 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create" asp-controller="Users">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label">Email</label>
-                <input type="text" asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+    <div class="col-md-3">
+        @Html.Partial("_UsersNav")
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="Create" asp-controller="Users">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label">Email</label>
+                        <input type="text" asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password" class="control-label">Пароль</label>
+                        <input type="password" asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Добавить" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Password" class="control-label">Пароль</label>
-                <input type="password" asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Добавить" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>

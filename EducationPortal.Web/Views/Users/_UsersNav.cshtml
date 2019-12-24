@@ -1,0 +1,11 @@
+﻿@model string
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link @NavPages.PageNavClass(ViewContext, "Index")" id="index" asp-controller="Users" asp-action="Index">Список пользователей</a></li>
+    <li class="nav-item"><a class="nav-link @NavPages.PageNavClass(ViewContext, "Create")" id="create" asp-controller="Users" asp-action="Create">Добавление пользователя</a></li>
+    
+    @if(!string.IsNullOrEmpty(Model))
+    {
+        <li class="nav-item"><a class="nav-link active" href="#">@Model</a></li>
+    }
+</ul>

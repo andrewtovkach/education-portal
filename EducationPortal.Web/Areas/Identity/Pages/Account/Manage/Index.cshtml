@@ -5,6 +5,20 @@
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
+@section Breadcrumb {
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="Identity" asp-page="/Account/Manage/Index">Профиль пользователя</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Информация о пользователе</li>
+        </ol>
+    </nav>
+    
+    <div class="page-header">
+        <h1>Информация о пользователе</h1>
+        <hr />
+    </div>
+}
+
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     <div class="col-md-6">

@@ -1,6 +1,10 @@
 ﻿@model IEnumerable<EducationPortal.Web.Data.Entities.Course>
 
 <ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Courses" asp-action="Index">Учебные курсы</a>
+    </li>
+
     @foreach (var course in Model)
     {
         <li class="nav-item">
