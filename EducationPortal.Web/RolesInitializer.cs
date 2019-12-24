@@ -8,7 +8,7 @@ namespace EducationPortal.Web
         public static async Task InitializeAsync(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             const string adminEmail = "admin@gmail.com";
-            const string password = "admin123456@";
+            const string password = "Admin123456@";
 
             if (await roleManager.FindByNameAsync("admin") == null)
             {
