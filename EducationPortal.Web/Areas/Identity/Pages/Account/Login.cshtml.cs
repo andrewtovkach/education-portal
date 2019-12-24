@@ -36,11 +36,11 @@ namespace EducationPortal.Web.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Поле Email обязательно для заполнения")]
+            [EmailAddress(ErrorMessage = "Поле Email не является валидным адресом электронной почты")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Пароль обязателен для заполнения")]
             [DataType(DataType.Password)]
             public string Password { get; set; }
 

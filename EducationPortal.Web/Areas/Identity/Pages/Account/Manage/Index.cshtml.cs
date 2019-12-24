@@ -42,7 +42,6 @@ namespace EducationPortal.Web.Areas.Identity.Pages.Account.Manage
         public class InputModel
         {
             [Phone]
-            [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
         }
 
@@ -97,6 +96,7 @@ namespace EducationPortal.Web.Areas.Identity.Pages.Account.Manage
 
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Ваш профиль был изменен!";
+
             return RedirectToPage();
         }
 
@@ -112,7 +112,6 @@ namespace EducationPortal.Web.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
 
             var userId = await _userManager.GetUserIdAsync(user);
             var email = await _userManager.GetEmailAsync(user);
