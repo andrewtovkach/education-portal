@@ -12,5 +12,10 @@ namespace EducationPortal.Web.Data.Entities
         public TestCompletion TestCompletion { get; set; }
         public int TestCompletionId { get; set; }
         public ICollection<AnswerHistoryData> AnswerHistoryData { get; set; }
+
+        public Attempt()
+        {
+            AnswerHistoryData = new List<AnswerHistoryData>();
+        }
     }
 }

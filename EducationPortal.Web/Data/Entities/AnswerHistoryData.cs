@@ -12,5 +12,10 @@ namespace EducationPortal.Web.Data.Entities
         public Question Question { get; set; }
         public DateTime Date { get; set; }
         public ICollection<AnswerHistory> AnswerHistories { get; set; }
+
+        public AnswerHistoryData()
+        {
+            AnswerHistories = new List<AnswerHistory>();
+        }
     }
 }

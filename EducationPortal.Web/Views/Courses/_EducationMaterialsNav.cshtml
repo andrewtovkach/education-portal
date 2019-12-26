@@ -1,0 +1,22 @@
+﻿@model EducationMaterialNavViewModel
+
+<ul class="nav nav-pills flex-column">
+    @if (User.IsInRole("admin"))
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, "AddEducationMaterial")" asp-controller="Courses" asp-action="AddEducationMaterial" asp-route-id="@Model.ModuleId">Добавление образовательного материала</a>
+        </li>
+    }
+
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Образовательные материалы</a>
+    </li>
+
+    @foreach (var educationMaterial in Model.EducationMaterials)
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, educationMaterial.Id.ToString())" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">@educationMaterial.Name</a>
+        </li>
+    }
+</ul>
+<br />

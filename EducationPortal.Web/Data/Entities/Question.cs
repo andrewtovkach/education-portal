@@ -15,6 +15,11 @@ namespace EducationPortal.Web.Data.Entities
         public Test Test { get; set; }
         public ICollection<Answer> Answers { get; set; }
 
+        public Question()
+        {
+            Answers = new List<Answer>();
+        }
+
         public string ImageSrc
         {
             get

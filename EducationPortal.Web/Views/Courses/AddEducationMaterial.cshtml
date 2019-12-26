@@ -1,0 +1,77 @@
+﻿@using EducationPortal.Web.Data.Enums
+@model CreateEducationMaterialViewModel
+
+@{
+    ViewData["Title"] = "Добавление образовательного материала";
+    ViewData["ActivePage"] = "AddEducationMaterial";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId">Курс @ViewBag.CourseName</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId" asp-route-moduleId="@ViewBag.ModuleId">Модуль @ViewBag.ModuleName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Добавление образовательного материала</li>
+    </ol>
+</nav>
+
+<div class="page-header">
+    <h1>Добавление образовательного материала</h1>
+    <hr />
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_EducationMaterialsNav", new EducationMaterialNavViewModel
+        {
+            CourseId = ViewBag.CourseId,
+            ModuleId = ViewBag.ModuleId,
+            EducationMaterials = ViewBag.EducationMaterials
+        })
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="AddEducationMaterial" asp-controller="Courses" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label">Имя образовательного материала</label>
+                        <input type="text" asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaterialImportance" class="control-label">Важность</label>
+                        <select asp-for="MaterialImportance" asp-items="Html.GetEnumSelectList<MaterialImportance>()" class="form-control">
+                            <option selected="selected" value="">Выберите важность</option>
+                        </select>
+                        <span asp-validation-for="MaterialImportance" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="File" class="control-label">Файл</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" asp-for="File">
+                            <label class="custom-file-label" asp-for="File">Выберите файл...</label>
+                            <span asp-validation-for="File" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Добавить" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(function() {
+            $('.custom-file-input').change(function () {
+                var fileName = $('#File')[0].files[0].name;
+                $('.custom-file-label').text(fileName);
+            });
+        });
+    </script>
+}
+

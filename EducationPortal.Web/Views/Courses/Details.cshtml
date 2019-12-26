@@ -21,143 +21,169 @@
         @Html.Partial("_CoursesNav", Model.Courses)
     </div>
     <div class="col-md-9">
-        <ul class="nav nav-tabs">
-            @foreach (var module in Model.Modules)
-            {
-                <li class="nav-item">
-                    @if (module.Id == Model.ActiveModuleId)
-                    {
-                        <a class="nav-link active" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
-                    }
-                    else
-                    {
-                        <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
-                    }
-                </li>
-            }
-        </ul>
-        <br />
+        @if (User.IsInRole("admin"))
+        {
+            <a asp-action="CreateModule" asp-controller="Courses" asp-route-id="@Model.CourseId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить модуль</a>
+        }
 
-        <h3>Образовательные материалы</h3>
+        @if (Model.Modules.Count() > 0)
+        {
+            <ul class="nav nav-tabs">
+                @foreach (var module in Model.Modules)
+                {
+                    <li class="nav-item">
+                        @if (module.Id == Model.ActiveModuleId)
+                        {
+                            <a class="nav-link active" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
+                        }
+                        else
+                        {
+                            <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <h3>Модули не найдены!</h3>
+        }
 
-        <table class="table table-hover">
-            <thead class="thead-light">
-            <tr>
-                <th scope="col">Имя</th>
-                <th scope="col">Важность</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
+        <br/>
+
+        @if (Model.Modules.Any())
+        {
+            <h3>Образовательные материалы</h3>
+             if (User.IsInRole("admin"))
+             {
+                 <a asp-action="AddEducationMaterial" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить образовательный материал</a>
+             }
+
+            <table class="table table-hover">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Важность</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
                 @foreach (var educationMaterial in Model.EducationMaterials)
+                {
+                    <tr scope="row">
+                        <td>@educationMaterial.Name</td>
+                        <td><img src="~/icons/@educationMaterial.ImportanceIconName" height="30px"/></td>
+                        <td><a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">Открыть</a></td>
+                    </tr>
+                }
+
+                @if (!Model.EducationMaterials.Any())
+                {
+                    <tr scope="row">
+                        <td>Образовательные материалы не найдены!</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+            <h3>Тесты</h3>
+
+            if (User.IsInRole("admin"))
             {
-                <tr scope="row">
-                    <td>@educationMaterial.Name</td>
-                    <td><img src="~/icons/@educationMaterial.ImportanceIconName" height="30px" /></td>
-                    <td><a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">Открыть</a></td>
-                </tr>
+                <a asp-action="AddTest" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить тест</a>
             }
 
-            @if(!Model.EducationMaterials.Any())
-            {
-                <tr scope="row">
-                    <td>Образовательные материалы не найдены!</td>
-                    <td></td>
-                    <td></td>
+            <table class="table table-hover">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col" style="width: 50%">Имя</th>
+                    <th scope="col">Количество вопросов</th>
+                    <th scope="col">Время на тест</th>
+                    <th scope="col">Количество сдач</th>
+                    <th scope="col">Средний результат</th>
+                    <th scope="col"></th>
                 </tr>
-            }
-            </tbody>
-        </table>
-
-        <h3>Тесты</h3>
-
-        <table class="table table-hover">
-            <thead class="thead-light">
-            <tr>
-                <th scope="col" style="width: 50%">Имя</th>
-                <th scope="col">Количество вопросов</th>
-                <th scope="col">Время на тест</th>
-                <th scope="col">Количество сдач</th>
-                <th scope="col">Средний результат</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var test in Model.Tests)
-            {
-                <tr scope="row">
-                    <td>@test.Test.Name</td>
-                    <td>@(test.Test.Questions?.Count ?? 0)</td>
-                    <td>@test.Test.TimeLimit минут</td>
-                    <td>
-                        <span class="badge badge-primary">@test.AttemptsCount / @test.Test.MaxNumberOfAttempts</span>
-                    </td>
-                    <td>
-                        @if (!test.AverageScore.HasValue)
-                        {
-                            <b>-</b>
-                        }
-                        else
-                        {
-                            if (test.AverageScore > 50)
+                </thead>
+                <tbody>
+                @foreach (var test in Model.Tests)
+                {
+                    <tr scope="row">
+                        <td>@test.Test.Name</td>
+                        <td>@(test.Test.Questions?.Count ?? 0)</td>
+                        <td>@test.Test.TimeLimit минут</td>
+                        <td>
+                            <span class="badge badge-primary">@test.AttemptsCount / @test.Test.MaxNumberOfAttempts</span>
+                        </td>
+                        <td>
+                            @if (!test.AverageScore.HasValue)
                             {
-                                <span class="badge badge-success">@(string.Format("{0:0.00}", test.AverageScore))%</span>
-                            }
-                            else if (test.AverageScore > 20)
-                            {
-                                <span class="badge badge-warning">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                                <b>-</b>
                             }
                             else
                             {
-                                <span class="badge badge-danger">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                                if (test.AverageScore > 50)
+                                {
+                                    <span class="badge badge-success">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                                }
+                                else if (test.AverageScore > 20)
+                                {
+                                    <span class="badge badge-warning">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">@(string.Format("{0:0.00}", test.AverageScore))%</span>
+                                }
                             }
-                        }
-                    </td>
-                    <td>
-                        @if (test.HasTestCompletions)
-                        {
-                            if (test.AttemptsCount < test.Test.MaxNumberOfAttempts)
+                        </td>
+                        <td>
+                            @if (test.HasTestCompletions)
                             {
-                                <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Действия
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Сдать еще раз</a>
-                                        <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
+                                if (test.AttemptsCount < test.Test.MaxNumberOfAttempts)
+                                {
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Действия
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Сдать еще раз</a>
+                                            <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
+                                }
+
                             }
                             else
                             {
-                                <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
+                                if (test.Test.Questions?.Count > 0)
+                                {
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
+                                }
                             }
+                        </td>
+                    </tr>
+                }
 
-                        }
-                        else
-                        {
-                            if (test.Test.Questions?.Count > 0)
-                            {
-                                <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
-                            }
-                        }
-                    </td>
-                </tr>
-            }
-            
-            @if(!Model.Tests.Any())
-            {
-                <tr scope="row">
-                    <td>Тесты не найдены!</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            }
-            </tbody>
-        </table>
+                @if (!Model.Tests.Any())
+                {
+                    <tr scope="row">
+                        <td>Тесты не найдены!</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+
 
     </div>
 </div>

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using EducationPortal.Web.Data;
 using EducationPortal.Web.Data.Entities;
-using EducationPortal.Web.Data.Enums;
 using EducationPortal.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -52,7 +51,15 @@ namespace EducationPortal.Web.Controllers
 
                 if (firstModule == null)
                 {
-                    return NotFound();
+                    return View(new CourseDetailsViewModel
+                    {
+                        Courses = _educationPortalDbContext.Courses,
+                        CourseId = course.Id,
+                        CourseName = course.Name,
+                        Modules = new List<Module>(),
+                        EducationMaterials = new List<EducationMaterial>(),
+                        Tests = new List<TestViewModel>()
+                    });
                 }
 
                 moduleId = firstModule.Id;
@@ -81,10 +88,20 @@ namespace EducationPortal.Web.Controllers
             return View(courseDetailsViewModel);
         }
 
+        [Authorize(Roles = "admin")]
+        public IActionResult Create()
+        {
+            ViewBag.Courses = _educationPortalDbContext.Courses;
+
+            return View();
+        }
+
         [HttpPost]
         [Authorize(Roles = "admin")]
         public IActionResult Create(CreateCourseViewModel model)
         {
+            ViewBag.Courses = _educationPortalDbContext.Courses;
+
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -95,10 +112,10 @@ namespace EducationPortal.Web.Controllers
                 TrainingHours = model.TrainingHours.Value
             };
 
-            _educationPortalDbContext.Courses.Add(course);
+            var courseEntity = _educationPortalDbContext.Courses.Add(course);
             _educationPortalDbContext.SaveChanges();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = courseEntity.Entity.Id });
         }
 
         [HttpPost]
@@ -120,11 +137,51 @@ namespace EducationPortal.Web.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        public IActionResult Create()
+        public IActionResult CreateModule(int id)
         {
-            ViewBag.Courses = _educationPortalDbContext.Courses;
+            var course = _educationPortalDbContext.Courses.Include(x => x.Modules)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = course.Id;
+            ViewBag.CourseName = course.Name;
+            ViewBag.Modules = course.Modules;
 
             return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public IActionResult CreateModule(CreateModuleViewModel model, int id)
+        {
+            var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == id);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = course.Id;
+            ViewBag.CourseName = course.Name;
+            ViewBag.Modules = course.Modules;
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var module = new Module
+            {
+                Name = model.Name,
+                CourseId = id
+            };
+
+            course.Modules.Add(module);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Details", new { id = id, moduleId = module.Id });
         }
 
         public IActionResult EducationFileContent(int id)
@@ -137,6 +194,84 @@ namespace EducationPortal.Web.Controllers
             }
 
             return new FileContentResult(educationMaterial.Data, educationMaterial.ContentType);
+        }
+
+        public IActionResult AddEducationMaterial(int id)
+        {
+            var module = _educationPortalDbContext.Modules.Include(x => x.EducationMaterials)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == module.CourseId);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = course.Id;
+            ViewBag.CourseName = course.Name;
+            ViewBag.ModuleId = module.Id;
+            ViewBag.ModuleName = module.Name;
+            ViewBag.EducationMaterials = module.EducationMaterials;
+
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public IActionResult AddEducationMaterial(CreateEducationMaterialViewModel model, int id)
+        {
+            var module = _educationPortalDbContext.Modules.FirstOrDefault(x => x.Id == id);
+
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == module.CourseId);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = course.Id;
+            ViewBag.CourseName = course.Name;
+            ViewBag.ModuleId = module.Id;
+            ViewBag.ModuleName = module.Name;
+            ViewBag.EducationMaterials = module.EducationMaterials;
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            using (var ms = new MemoryStream())
+            {
+                model.File.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+
+                var educationMaterial = new EducationMaterial
+                {
+                    Data = fileBytes,
+                    ContentType = model.File.ContentType,
+                    MaterialImportance = model.MaterialImportance.Value,
+                    Name = model.Name
+                };
+
+                module.EducationMaterials.Add(educationMaterial);
+                _educationPortalDbContext.SaveChanges();
+            }
+
+            return RedirectToAction("Details", new { id = course.Id, moduleId = module.Id });
+        }
+
+        public IActionResult AddTest(int id)
+        {
+            return View();
         }
 
         #region Private Methods

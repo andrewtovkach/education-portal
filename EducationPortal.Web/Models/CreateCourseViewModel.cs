@@ -12,7 +12,7 @@ namespace EducationPortal.Web.Models
         [Required(ErrorMessage = "Поле Количество учебных часов обязательно для заполнения")]
         public int? TrainingHours { get; set; }
 
-        [Required(ErrorMessage = "Поле Сложность курса обязательно для заполнения")]
+        [Required(ErrorMessage = "Поле Сложность обязательно для заполнения")]
         public CourseComplexity? CourseComplexity { get; set; }
     }
 }

@@ -1,0 +1,47 @@
+﻿@model CreateModuleViewModel
+
+@{
+    ViewData["Title"] = "Добавление модуля";
+    ViewData["ActivePage"] = "CreateModule";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId">Курс @ViewBag.CourseName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Добавление модуля</li>
+    </ol>
+</nav>
+
+<div class="page-header">
+    <h1>Добавление модуля</h1>
+    <hr />
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_ModulesNav", new ModuleNavViewModel
+        {
+            CourseId = ViewBag.CourseId,
+            Modules = ViewBag.Modules
+        })
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="CreateModule" asp-controller="Courses">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label">Имя модуля</label>
+                        <input type="text" asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Добавить" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

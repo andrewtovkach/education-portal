@@ -101,3 +101,7 @@ table tbody td {
     -webkit-justify-content: space-between;
     justify-content: space-between;
 }
+
+.custom-file-label:after {
+    content: "Обзор" !important;
+}

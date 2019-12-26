@@ -10,5 +10,11 @@ namespace EducationPortal.Web.Data.Entities
         public ICollection<Test> Tests { get; set; }
         public int CourseId { get; set; }
         public Course Course { get; set; }
+
+        public Module()
+        {
+            EducationMaterials = new List<EducationMaterial>();
+            Tests = new List<Test>();
+        }
     }
 }

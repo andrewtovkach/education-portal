@@ -11,6 +11,11 @@ namespace EducationPortal.Web.Data.Entities
         public CourseComplexity CourseComplexity { get; set; }
         public ICollection<Module> Modules { get; set; }
 
+        public Course()
+        {
+            Modules = new List<Module>();
+        }
+
         public string ComplexityIconName
         {
             get

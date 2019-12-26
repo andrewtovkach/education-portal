@@ -1,0 +1,22 @@
+﻿@model ModuleNavViewModel
+
+<ul class="nav nav-pills flex-column">
+    @if (User.IsInRole("admin"))
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, "CreateModule")" asp-controller="Courses" asp-action="CreateModule" asp-route-id="@Model.CourseId">Добавление модуля</a>
+        </li>
+    }
+
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId">Модули</a>
+    </li>
+
+    @foreach (var module in Model.Modules)
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, module.Id.ToString())" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@module.Id">Модуль @module.Name</a>
+        </li>
+    }
+</ul>
+<br />

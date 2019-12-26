@@ -138,21 +138,22 @@
             return new Date(dt.getTime() + minutes*60000);
         }
 
-        $(function () {
+        $(function() {
             $('[data-toggle="tooltip"]').tooltip();
 
             $("#timer")
-                .countdown(addMinutesToDate(new Date(), @Model.TimeLimit), function (event) {
-                    if (event.type === "finish") {
-                        $("#test-form").submit();
-                    } else {
-                        $(this).text(
-                            event.strftime('%H:%M:%S')
-                        );
-                    }
-                });
+                .countdown(addMinutesToDate(new Date(), @Model.TimeLimit),
+                    function(event) {
+                        if (event.type === "finish") {
+                            $("#test-form").submit();
+                        } else {
+                            $(this).text(
+                                event.strftime('%H:%M:%S')
+                            );
+                        }
+                    });
 
-            $('.custom-control-label').click(function () {
+            $('.custom-control-label').click(function() {
                 var inputElement = $(this).parent().children().first();
                 var checkedAttr = inputElement.attr('checked');
 
@@ -162,6 +163,6 @@
                     inputElement.attr('checked', 'checked');
                 }
             });
-        })
+        });
     </script>
 }

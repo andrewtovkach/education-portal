@@ -10,5 +10,10 @@ namespace EducationPortal.Web.Data.Entities
         public int TestId { get; set; }
         public Test Test { get; set; }
         public ICollection<Attempt> Attempts { get; set; }
+
+        public TestCompletion()
+        {
+            Attempts = new List<Attempt>();
+        }
     }
 }
