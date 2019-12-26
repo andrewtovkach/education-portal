@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using EducationPortal.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationPortal.Web.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;

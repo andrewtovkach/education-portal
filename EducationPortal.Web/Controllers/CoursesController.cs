@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using EducationPortal.Web.Data;
 using EducationPortal.Web.Data.Entities;
+using EducationPortal.Web.Data.Enums;
 using EducationPortal.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -77,6 +79,52 @@ namespace EducationPortal.Web.Controllers
             };
 
             return View(courseDetailsViewModel);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public IActionResult Create(CreateCourseViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var course = new Course
+            {
+                Name = model.Name,
+                CourseComplexity = model.CourseComplexity.Value,
+                TrainingHours = model.TrainingHours.Value
+            };
+
+            _educationPortalDbContext.Courses.Add(course);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public ActionResult Delete(int id)
+        {
+            var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == id);
+            if (course == null)
+                return RedirectToAction("Index");
+
+            var moduleIds = _educationPortalDbContext.Modules.Where(x => x.CourseId == id).Select(x => x.Id);
+            var tests = _educationPortalDbContext.Tests.Where(x => moduleIds.Contains(x.ModuleId));
+
+            _educationPortalDbContext.Tests.RemoveRange(tests);
+            _educationPortalDbContext.Courses.Remove(course);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "admin")]
+        public IActionResult Create()
+        {
+            ViewBag.Courses = _educationPortalDbContext.Courses;
+
+            return View();
         }
 
         public IActionResult EducationFileContent(int id)

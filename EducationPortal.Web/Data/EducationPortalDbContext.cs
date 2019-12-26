@@ -14,6 +14,7 @@ namespace EducationPortal.Web.Data
         public DbSet<AnswerHistoryData> AnswerHistoryData { get; set; }
         public DbSet<Attempt> Attempts { get; set; }
         public DbSet<TestCompletion> TestCompletions { get; set; }
+        public DbSet<Module> Modules { get; set; }
 
         public EducationPortalDbContext(DbContextOptions<EducationPortalDbContext> options)
             : base(options)
