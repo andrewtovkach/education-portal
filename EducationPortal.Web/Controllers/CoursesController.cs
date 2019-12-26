@@ -184,6 +184,22 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id = id, moduleId = module.Id });
         }
 
+        [Authorize(Roles = "admin")]
+        public IActionResult DeleteModule(int id, int courseId)
+        {
+            var module = _educationPortalDbContext.Modules.FirstOrDefault(x => x.Id == id);
+
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            _educationPortalDbContext.Modules.Remove(module);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Details", new { id = courseId });
+        }
+
         public IActionResult EducationFileContent(int id)
         {
             var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
@@ -267,6 +283,22 @@ namespace EducationPortal.Web.Controllers
             }
 
             return RedirectToAction("Details", new { id = course.Id, moduleId = module.Id });
+        }
+
+        [Authorize(Roles = "admin")]
+        public IActionResult DeleteEducationMaterial(int id, int moduleId, int courseId)
+        {
+            var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
+
+            if (educationMaterial == null)
+            {
+                return RedirectToAction("Details", new { id = courseId, moduleId = moduleId });
+            }
+
+            _educationPortalDbContext.EducationMaterials.Remove(educationMaterial);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Details", new { id = courseId, moduleId = moduleId });
         }
 
         public IActionResult AddTest(int id)

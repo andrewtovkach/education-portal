@@ -26,7 +26,7 @@
             <a asp-action="CreateModule" asp-controller="Courses" asp-route-id="@Model.CourseId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить модуль</a>
         }
 
-        @if (Model.Modules.Count() > 0)
+        @if (Model.Modules.Any())
         {
             <ul class="nav nav-tabs">
                 @foreach (var module in Model.Modules)
@@ -50,41 +50,61 @@
         }
 
         <br/>
-
+        
         @if (Model.Modules.Any())
         {
-            <h3>Образовательные материалы</h3>
              if (User.IsInRole("admin"))
              {
-                 <a asp-action="AddEducationMaterial" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить образовательный материал</a>
+                 <form asp-controller="Courses" asp-action="DeleteModule" asp-route-id="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post" class="float-right">
+                     <button type="submit" class="btn btn-sm btn-danger">
+                         Удалить модуль
+                     </button>
+                 </form>
              }
+
+            <h3>Образовательные материалы</h3>
+            if (User.IsInRole("admin"))
+            {
+            <a asp-action="AddEducationMaterial" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить образовательный материал</a>
+            }
 
             <table class="table table-hover">
                 <thead class="thead-light">
-                <tr>
-                    <th scope="col">Имя</th>
-                    <th scope="col">Важность</th>
-                    <th scope="col"></th>
-                </tr>
+                    <tr>
+                        <th scope="col">Имя</th>
+                        <th scope="col">Важность</th>
+                        <th scope="col"></th>
+                    </tr>
                 </thead>
                 <tbody>
-                @foreach (var educationMaterial in Model.EducationMaterials)
-                {
+                    @foreach (var educationMaterial in Model.EducationMaterials)
+                    {
                     <tr scope="row">
                         <td>@educationMaterial.Name</td>
-                        <td><img src="~/icons/@educationMaterial.ImportanceIconName" height="30px"/></td>
-                        <td><a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">Открыть</a></td>
-                    </tr>
-                }
+                        <td><img src="~/icons/@educationMaterial.ImportanceIconName" height="30px" /></td>
+                        <td>
+                            <form asp-controller="Courses" asp-action="DeleteEducationMaterial" asp-route-id="@educationMaterial.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
+                                <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">Открыть</a>
 
-                @if (!Model.EducationMaterials.Any())
-                {
+                                @if(User.IsInRole("admin"))
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Удалить
+                                        </button>
+                                    }
+                            </form>
+                        </td>
+                    </tr>
+                    }
+
+                    @if (!Model.EducationMaterials.Any())
+                    {
                     <tr scope="row">
                         <td>Образовательные материалы не найдены!</td>
                         <td></td>
                         <td></td>
                     </tr>
-                }
+                    }
                 </tbody>
             </table>
 
@@ -92,7 +112,7 @@
 
             if (User.IsInRole("admin"))
             {
-                <a asp-action="AddTest" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить тест</a>
+            <a asp-action="AddTest" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить тест</a>
             }
 
             <table class="table table-hover">
@@ -183,7 +203,5 @@
                 </tbody>
             </table>
         }
-
-
-    </div>
+</div>
 </div>
