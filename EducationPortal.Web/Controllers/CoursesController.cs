@@ -181,7 +181,7 @@ namespace EducationPortal.Web.Controllers
             course.Modules.Add(module);
             _educationPortalDbContext.SaveChanges();
 
-            return RedirectToAction("Details", new { id = id, moduleId = module.Id });
+            return RedirectToAction("Details", new { id, moduleId = module.Id });
         }
 
         [Authorize(Roles = "admin")]
@@ -292,13 +292,13 @@ namespace EducationPortal.Web.Controllers
 
             if (educationMaterial == null)
             {
-                return RedirectToAction("Details", new { id = courseId, moduleId = moduleId });
+                return RedirectToAction("Details", new { id = courseId, moduleId });
             }
 
             _educationPortalDbContext.EducationMaterials.Remove(educationMaterial);
             _educationPortalDbContext.SaveChanges();
 
-            return RedirectToAction("Details", new { id = courseId, moduleId = moduleId });
+            return RedirectToAction("Details", new { id = courseId, moduleId });
         }
 
         public IActionResult AddTest(int id)

@@ -215,7 +215,7 @@ namespace EducationPortal.Web.Controllers
 
         private int AddTestAttempt(int testId, string userId)
         {
-            if (!_educationPortalDbContext.TestCompletions.Any(x => x.TestId == testId))
+            if (!_educationPortalDbContext.TestCompletions.Any(x => x.TestId == testId && x.UserId == Guid.Parse(userId)))
             {
                 var newAttempt = new Attempt
                 {
@@ -239,7 +239,7 @@ namespace EducationPortal.Web.Controllers
             }
             else
             {
-                var testCompletion = _educationPortalDbContext.TestCompletions.Where(x => x.TestId == testId)
+                var testCompletion = _educationPortalDbContext.TestCompletions.Where(x => x.TestId == testId && x.UserId == Guid.Parse(userId))
                     .Include(x => x.Attempts)
                     .FirstOrDefault();
 

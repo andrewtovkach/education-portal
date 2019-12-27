@@ -46,7 +46,9 @@
         }
         else
         {
-            <h3>Модули не найдены!</h3>
+            <div class="alert alert-info" role="alert">
+                Модули не найдены!
+            </div>
         }
 
         <br/>
@@ -121,8 +123,13 @@
                     <th scope="col" style="width: 50%">Имя</th>
                     <th scope="col">Количество вопросов</th>
                     <th scope="col">Время на тест</th>
-                    <th scope="col">Количество сдач</th>
-                    <th scope="col">Средний результат</th>
+
+                    @if (User.IsInRole("user"))
+                    {
+                        <th scope="col">Количество сдач</th>
+                        <th scope="col">Средний результат</th>
+                    }
+
                     <th scope="col"></th>
                 </tr>
                 </thead>
@@ -133,58 +140,67 @@
                         <td>@test.Test.Name</td>
                         <td>@(test.Test.Questions?.Count ?? 0)</td>
                         <td>@test.Test.TimeLimit минут</td>
-                        <td>
-                            <span class="badge badge-primary">@test.AttemptsCount / @test.Test.MaxNumberOfAttempts</span>
-                        </td>
-                        <td>
-                            @if (!test.AverageScore.HasValue)
-                            {
-                                <b>-</b>
-                            }
-                            else
-                            {
-                                if (test.AverageScore > 50)
-                                {
-                                    <span class="badge badge-success">@(string.Format("{0:0.00}", test.AverageScore))%</span>
-                                }
-                                else if (test.AverageScore > 20)
-                                {
-                                    <span class="badge badge-warning">@(string.Format("{0:0.00}", test.AverageScore))%</span>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-danger">@(string.Format("{0:0.00}", test.AverageScore))%</span>
-                                }
-                            }
-                        </td>
-                        <td>
-                            @if (test.HasTestCompletions)
-                            {
-                                if (test.AttemptsCount < test.Test.MaxNumberOfAttempts)
-                                {
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Действия
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Сдать еще раз</a>
-                                            <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
-                                }
 
-                            }
-                            else
-                            {
-                                if (test.Test.Questions?.Count > 0)
+                        @if (User.IsInRole("user"))
+                        {
+                            <td>
+                                <span class="badge badge-primary">@test.AttemptsCount / @test.Test.MaxNumberOfAttempts</span>
+                            </td>
+                            <td>
+                                @if (!test.AverageScore.HasValue)
                                 {
-                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
+                                    <b>-</b>
                                 }
+                                else
+                                {
+                                    if (test.AverageScore > 50)
+                                    {
+                                        <span class="badge badge-success">@($"{test.AverageScore:0.00}")%</span>
+                                    }
+                                    else if (test.AverageScore > 20)
+                                    {
+                                        <span class="badge badge-warning">@($"{test.AverageScore:0.00}")%</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">@($"{test.AverageScore:0.00}")%</span>
+                                    }
+                                }
+                            </td>
+                        }
+
+                        <td>
+                            @if (User.IsInRole("user"))
+                            {
+                                 if (test.HasTestCompletions)
+                                 {
+                                     if (test.AttemptsCount < test.Test.MaxNumberOfAttempts)
+                                     {
+                                         <div class="dropdown">
+                                             <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                 Действия
+                                             </button>
+                                             <div class="dropdown-menu">
+                                                 <a class="dropdown-item" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Сдать еще раз</a>
+                                                 <a class="dropdown-item" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
+                                             </div>
+                                         </div>
+                                     }
+                                     else
+                                     {
+                                         <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@test.Test.Id">Результаты</a>
+                                     }
+
+                                 }
+                                 else
+                                 {
+                                     if (test.Test.Questions?.Count > 0)
+                                     {
+                                         <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
+                                     }
+                                 }
                             }
+                            
                         </td>
                     </tr>
                 }
