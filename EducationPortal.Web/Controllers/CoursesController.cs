@@ -265,22 +265,7 @@ namespace EducationPortal.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            using (var ms = new MemoryStream())
-            {
-                model.File.CopyTo(ms);
-                var fileBytes = ms.ToArray();
-
-                var educationMaterial = new EducationMaterial
-                {
-                    Data = fileBytes,
-                    ContentType = model.File.ContentType,
-                    MaterialImportance = model.MaterialImportance.Value,
-                    Name = model.Name
-                };
-
-                module.EducationMaterials.Add(educationMaterial);
-                _educationPortalDbContext.SaveChanges();
-            }
+            UploadFileToDb(model, module);
 
             return RedirectToAction("Details", new { id = course.Id, moduleId = module.Id });
         }
@@ -301,9 +286,69 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id = courseId, moduleId });
         }
 
+        [Authorize(Roles = "admin")]
         public IActionResult AddTest(int id)
         {
+            var module = _educationPortalDbContext.Modules.Include(x => x.Course).FirstOrDefault(x => x.Id == id);
+
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = module.CourseId;
+            ViewBag.CourseName = module.Course.Name;
+            ViewBag.ModuleId = module.Id;
+            ViewBag.ModuleName = module.Name;
+
             return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public IActionResult AddTest(CreateTestViewModel model, int id)
+        {
+            var module = _educationPortalDbContext.Modules.Include(x => x.Course).FirstOrDefault(x => x.Id == id);
+
+            if (module == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = module.CourseId;
+            ViewBag.CourseName = module.Course.Name;
+            ViewBag.ModuleId = module.Id;
+            ViewBag.ModuleName = module.Name;
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            module.Tests.Add(new Test
+            {
+                MaxNumberOfAttempts = model.MaxNumberOfAttempts.Value,
+                TimeLimit = model.TimeLimit.Value,
+                Name = model.Name
+            });
+
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Details", new { id = module.CourseId, moduleId = id });
+        }
+
+        [Authorize(Roles = "admin")]
+        public IActionResult DeleteTest(int id, int courseId, int moduleId)
+        {
+            var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            _educationPortalDbContext.Tests.Remove(test);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Details", new { id = courseId, moduleId });
         }
 
         #region Private Methods
@@ -331,6 +376,26 @@ namespace EducationPortal.Web.Controllers
             }
 
             return testsCollection;
+        }
+
+        private void UploadFileToDb(CreateEducationMaterialViewModel model, Module module)
+        {
+            using (var ms = new MemoryStream())
+            {
+                model.File.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+
+                var educationMaterial = new EducationMaterial
+                {
+                    Data = fileBytes,
+                    ContentType = model.File.ContentType,
+                    MaterialImportance = model.MaterialImportance.Value,
+                    Name = model.Name
+                };
+
+                module.EducationMaterials.Add(educationMaterial);
+                _educationPortalDbContext.SaveChanges();
+            }
         }
         #endregion
     }

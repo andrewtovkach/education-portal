@@ -215,50 +215,8 @@ namespace EducationPortal.Web.Controllers
 
         private int AddTestAttempt(int testId, string userId)
         {
-            if (!_educationPortalDbContext.TestCompletions.Any(x => x.TestId == testId && x.UserId == Guid.Parse(userId)))
-            {
-                var newAttempt = new Attempt
-                {
-                    Date = DateTime.Now,
-                    Name = "Результат 1"
-                };
-
-                _educationPortalDbContext.TestCompletions.Add(new TestCompletion
-                {
-                    UserId = Guid.Parse(userId),
-                    TestId = testId,
-                    Attempts = new List<Attempt>
-                    {
-                        newAttempt
-                    }
-                });
-
-                _educationPortalDbContext.SaveChanges();
-
-                return newAttempt.Id;
-            }
-            else
-            {
-                var testCompletion = _educationPortalDbContext.TestCompletions.Where(x => x.TestId == testId && x.UserId == Guid.Parse(userId))
-                    .Include(x => x.Attempts)
-                    .FirstOrDefault();
-
-                if (testCompletion == null)
-                {
-                    return -1;
-                }
-
-                var newAttempt = new Attempt
-                {
-                    Date = DateTime.Now,
-                    Name = $"Результат {testCompletion.Attempts.Count() + 1}"
-                };
-
-                testCompletion.Attempts.Add(newAttempt);
-                _educationPortalDbContext.SaveChanges();
-
-                return newAttempt.Id;
-            }
+            return _educationPortalDbContext.TestCompletions.Any(x => x.TestId == testId && x.UserId == Guid.Parse(userId)) ? 
+                AddAdditionalAttempt(testId, userId) : AddNewTestAttempt(testId, userId);
         }
 
         private void AddAnswerHistoryData(Test test, IFormCollection form, int attemptId)
@@ -342,6 +300,53 @@ namespace EducationPortal.Web.Controllers
         private static int GetTotalScore(Test test)
         {
             return test.Questions.Sum(question => question.Answers.Count(x => x.IsCorrect));
+        }
+
+        private int AddAdditionalAttempt(int testId, string userId)
+        {
+            var testCompletion = _educationPortalDbContext.TestCompletions
+                .Where(x => x.TestId == testId && x.UserId == Guid.Parse(userId))
+                .Include(x => x.Attempts)
+                .FirstOrDefault();
+
+            if (testCompletion == null)
+            {
+                return -1;
+            }
+
+            var newAttempt = new Attempt
+            {
+                Date = DateTime.Now,
+                Name = $"Результат {testCompletion.Attempts.Count() + 1}"
+            };
+
+            testCompletion.Attempts.Add(newAttempt);
+            _educationPortalDbContext.SaveChanges();
+
+            return newAttempt.Id;
+        }
+
+        private int AddNewTestAttempt(int testId, string userId)
+        {
+            var newAttempt = new Attempt
+            {
+                Date = DateTime.Now,
+                Name = "Результат 1"
+            };
+
+            _educationPortalDbContext.TestCompletions.Add(new TestCompletion
+            {
+                UserId = Guid.Parse(userId),
+                TestId = testId,
+                Attempts = new List<Attempt>
+                {
+                    newAttempt
+                }
+            });
+
+            _educationPortalDbContext.SaveChanges();
+
+            return newAttempt.Id;
         }
         #endregion
     }

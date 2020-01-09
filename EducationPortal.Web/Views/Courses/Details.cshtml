@@ -123,6 +123,11 @@
                     <th scope="col" style="width: 50%">Имя</th>
                     <th scope="col">Количество вопросов</th>
                     <th scope="col">Время на тест</th>
+                    
+                    @if (User.IsInRole("admin"))
+                    {
+                        <th scope="col">Количество попыток</th>
+                    }
 
                     @if (User.IsInRole("user"))
                     {
@@ -140,6 +145,11 @@
                         <td>@test.Test.Name</td>
                         <td>@(test.Test.Questions?.Count ?? 0)</td>
                         <td>@test.Test.TimeLimit минут</td>
+                        
+                        @if (User.IsInRole("admin"))
+                        {
+                            <td>@test.Test.MaxNumberOfAttempts</td>
+                        }
 
                         @if (User.IsInRole("user"))
                         {
@@ -199,6 +209,15 @@
                                          <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Details" asp-route-id="@test.Test.Id">Пройти</a>
                                      }
                                  }
+                            }
+                            
+                            @if (User.IsInRole("admin"))
+                            {
+                                <form asp-controller="Courses" asp-action="DeleteTest" asp-route-id="@test.Test.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Удалить
+                                    </button>
+                                </form>
                             }
                             
                         </td>

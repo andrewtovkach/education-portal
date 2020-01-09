@@ -1,7 +1,57 @@
-﻿
+﻿@model CreateTestViewModel
+
 @{
-    ViewData["Title"] = "AddTest";
+    ViewData["Title"] = "Добавление теста";
+    ViewData["ActivePage"] = "AddTest";
 }
 
-<h1>AddTest</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId">Курс @ViewBag.CourseName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId" asp-route-moduleId="@ViewBag.ModuleId">Модуль @ViewBag.ModuleName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Добавление теста</li>
+    </ol>
+</nav>
 
+<div class="page-header">
+    <h1>Добавление теста</h1>
+    <hr />
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_TestsNav", new TestNavViewModel
+        {
+            CourseId = ViewBag.CourseId,
+            ModuleId = ViewBag.ModuleId
+        })
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <div class="col-md-6">
+                <form asp-action="AddTest" asp-controller="Courses" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label">Имя теста</label>
+                        <input type="text" asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="TimeLimit" class="control-label">Время на тест (мин)</label>
+                        <input type="number" asp-for="TimeLimit" class="form-control" />
+                        <span asp-validation-for="TimeLimit" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaxNumberOfAttempts" class="control-label">Макс количество попыток</label>
+                        <input type="number" asp-for="MaxNumberOfAttempts" class="form-control" />
+                        <span asp-validation-for="MaxNumberOfAttempts" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Добавить" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,4 @@
-﻿using System;
-using EducationPortal.Web.Extensions.Alerts;
+﻿using EducationPortal.Web.Extensions.Alerts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EducationPortal.Web.Extensions
