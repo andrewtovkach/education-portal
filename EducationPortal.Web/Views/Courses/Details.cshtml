@@ -86,7 +86,7 @@
                         <td><img src="~/icons/@educationMaterial.ImportanceIconName" height="30px" /></td>
                         <td>
                             <form asp-controller="Courses" asp-action="DeleteEducationMaterial" asp-route-id="@educationMaterial.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
-                                <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">Открыть</a>
+                                <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationMaterial" asp-route-id="@educationMaterial.Id">Открыть</a>
 
                                 @if(User.IsInRole("admin"))
                                     {

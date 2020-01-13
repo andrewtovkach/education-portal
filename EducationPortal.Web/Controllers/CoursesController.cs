@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Spire.Doc;
+using Spire.Xls;
 
 namespace EducationPortal.Web.Controllers
 {
@@ -200,6 +202,24 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id = courseId });
         }
 
+        public IActionResult EducationMaterial(int id)
+        {
+            var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
+
+            if (educationMaterial == null)
+            {
+                return NotFound();
+            }
+
+            var educationMaterialViewModel = new EducationMaterialViewModel
+            {
+                Id = educationMaterial.Id,
+                Name = educationMaterial.Name
+            };
+
+            return View(educationMaterialViewModel);
+        }
+
         public IActionResult EducationFileContent(int id)
         {
             var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
@@ -209,7 +229,41 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
-            return new FileContentResult(educationMaterial.Data, educationMaterial.ContentType);
+            var randomName = DateTime.Now.Ticks.ToString();
+            var temporaryFolder = Path.Combine(Path.GetTempPath(), "EducationPortal");
+            if (!Directory.Exists(temporaryFolder))
+            {
+                Directory.CreateDirectory(temporaryFolder);
+            }
+
+            foreach (var file in new DirectoryInfo(temporaryFolder).GetFiles())
+            {
+                file.Delete();
+            }
+
+            switch (educationMaterial.ContentType)
+            {
+                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                {
+                    return GetWordFileContext(temporaryFolder, randomName, educationMaterial.Data);
+                }
+                case "application/msword":
+                {
+                    return GetWordFileContext(temporaryFolder, randomName, educationMaterial.Data, "doc");
+                }
+                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                {
+                    return GetExcelFileContent(temporaryFolder, randomName, educationMaterial.Data);
+                }
+                case "application/vnd.ms-excel":
+                {
+                    return GetExcelFileContent(temporaryFolder, randomName, educationMaterial.Data, "xls");
+                }
+                default:
+                {
+                    return new FileContentResult(educationMaterial.Data, educationMaterial.ContentType);
+                }
+            }
         }
 
         public IActionResult AddEducationMaterial(int id)
@@ -396,6 +450,53 @@ namespace EducationPortal.Web.Controllers
                 module.EducationMaterials.Add(educationMaterial);
                 _educationPortalDbContext.SaveChanges();
             }
+        }
+
+        private static void WriteBytesToFile(string filePath, byte[] data)
+        {
+            using (Stream file = System.IO.File.OpenWrite(filePath))
+            {
+                file.Write(data, 0, data.Length);
+                file.Close();
+            }
+        }
+
+        private static void SaveXlsxFileToHtml(string xlsFilePath, string htmlFilePath)
+        {
+            var workbook = new Workbook();
+            workbook.LoadFromFile(xlsFilePath);
+
+            var sheet = workbook.Worksheets[0];
+            sheet.SaveToHtml(htmlFilePath);
+        }
+
+        private static void SaveDocxFileToHtml(string docFilePath, string htmlFilePath)
+        {
+            var document = new Document();
+            document.LoadFromFile(docFilePath);
+            document.SaveToFile(htmlFilePath, Spire.Doc.FileFormat.Html);
+        }
+
+        private IActionResult GetWordFileContext(string temporaryFolder, string randomName,
+            byte [] data, string extension = "docx")
+        {
+            var htmlFilePath = Path.Combine(temporaryFolder, randomName + ".html");
+            var docFilePath = Path.Combine(temporaryFolder, randomName + "." + extension);
+            WriteBytesToFile(docFilePath, data);
+            SaveDocxFileToHtml(docFilePath, htmlFilePath);
+
+            return File(System.IO.File.OpenRead(htmlFilePath), "text/html");
+        }
+
+        private IActionResult GetExcelFileContent(string temporaryFolder, string randomName,
+            byte[] data, string extension = "xlsx")
+        {
+            var htmlFilePath = Path.Combine(temporaryFolder, randomName + ".html");
+            var xlsFilePath = Path.Combine(Path.GetTempPath(), randomName + "." + extension);
+            WriteBytesToFile(xlsFilePath, data);
+            SaveXlsxFileToHtml(xlsFilePath, htmlFilePath);
+
+            return File(System.IO.File.OpenRead(htmlFilePath), "text/html");
         }
         #endregion
     }
