@@ -12,10 +12,10 @@
         <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Образовательные материалы</a>
     </li>
 
-    @foreach (var educationMaterial in Model.EducationMaterials)
+    @foreach (var educationMaterial in Model.EducationMaterials.OrderByDescending(x => x.Name))
     {
         <li class="nav-item">
-            <a class="nav-link @NavPages.PageNavClass(ViewContext, educationMaterial.Id.ToString())" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">@educationMaterial.Name</a>
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, educationMaterial.Id.ToString())" asp-controller="Courses" asp-action="EducationMaterial" asp-route-id="@educationMaterial.Id">@educationMaterial.Name</a>
         </li>
     }
 </ul>

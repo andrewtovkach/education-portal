@@ -206,6 +206,15 @@ namespace EducationPortal.Web.Controllers
         {
             var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
 
+            var module = _educationPortalDbContext.Modules.Include(x => x.Course)
+                .Include(x => x.EducationMaterials)
+                .FirstOrDefault(x => x.Id == educationMaterial.ModuleId);
+
+            if (module == null)
+            {
+                return NotFound();
+            }
+
             if (educationMaterial == null)
             {
                 return NotFound();
@@ -216,6 +225,12 @@ namespace EducationPortal.Web.Controllers
                 Id = educationMaterial.Id,
                 Name = educationMaterial.Name
             };
+
+            ViewBag.CourseId = module.CourseId;
+            ViewBag.CourseName = module.Course.Name;
+            ViewBag.ModuleId = module.Id;
+            ViewBag.ModuleName = module.Name;
+            ViewBag.EducationMaterials = module.EducationMaterials;
 
             return View(educationMaterialViewModel);
         }
@@ -229,33 +244,24 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
+            var temporaryFolder = GetTemporaryFolderPath();
+
             var randomName = DateTime.Now.Ticks.ToString();
-            var temporaryFolder = Path.Combine(Path.GetTempPath(), "EducationPortal");
-            if (!Directory.Exists(temporaryFolder))
-            {
-                Directory.CreateDirectory(temporaryFolder);
-            }
-
-            foreach (var file in new DirectoryInfo(temporaryFolder).GetFiles())
-            {
-                file.Delete();
-            }
-
             switch (educationMaterial.ContentType)
             {
-                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                case EducationMaterialContentType.Docx:
                 {
                     return GetWordFileContext(temporaryFolder, randomName, educationMaterial.Data);
                 }
-                case "application/msword":
+                case EducationMaterialContentType.Doc:
                 {
                     return GetWordFileContext(temporaryFolder, randomName, educationMaterial.Data, "doc");
                 }
-                case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                case EducationMaterialContentType.Xlsx:
                 {
                     return GetExcelFileContent(temporaryFolder, randomName, educationMaterial.Data);
                 }
-                case "application/vnd.ms-excel":
+                case EducationMaterialContentType.Xls:
                 {
                     return GetExcelFileContent(temporaryFolder, randomName, educationMaterial.Data, "xls");
                 }
@@ -497,6 +503,22 @@ namespace EducationPortal.Web.Controllers
             SaveXlsxFileToHtml(xlsFilePath, htmlFilePath);
 
             return File(System.IO.File.OpenRead(htmlFilePath), "text/html");
+        }
+
+        private static string GetTemporaryFolderPath()
+        {
+            var temporaryFolder = Path.Combine(Path.GetTempPath(), "EducationPortal");
+            if (!Directory.Exists(temporaryFolder))
+            {
+                Directory.CreateDirectory(temporaryFolder);
+            }
+
+            foreach (var file in new DirectoryInfo(temporaryFolder).GetFiles())
+            {
+                file.Delete();
+            }
+
+            return temporaryFolder;
         }
         #endregion
     }
