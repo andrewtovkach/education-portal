@@ -120,7 +120,7 @@
             <table class="table table-hover">
                 <thead class="thead-light">
                 <tr>
-                    <th scope="col" style="width: 50%">Имя</th>
+                    <th scope="col">Имя</th>
                     <th scope="col">Количество вопросов</th>
                     <th scope="col">Время на тест</th>
                     
@@ -214,6 +214,8 @@
                             @if (User.IsInRole("admin") || User.IsInRole("tutor"))
                             {
                                 <form asp-controller="Courses" asp-action="DeleteTest" asp-route-id="@test.Test.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Create" asp-route-id="@test.Test.Id">Открыть</a>
+
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         Удалить
                                     </button>

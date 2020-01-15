@@ -28,5 +28,25 @@ namespace EducationPortal.Web.Data.Entities
                 return $"data:image/gif;base64,{imageBase64}";
             }
         }
+
+        public string QuestionTypeString
+        {
+            get
+            {
+                switch (QuestionType)
+                {
+                    case QuestionType.MultipleAnswers:
+                        return "Несколько вариантов ответов";
+                    case QuestionType.OneAnswer:
+                        return "Один вариант ответа";
+                    case QuestionType.TextInput:
+                        return "Поле ввода";
+                }
+
+                return "Несколько вариантов ответов";
+            }
+        }
+
+        public bool HasImage => Image != null;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using EducationPortal.Web.Data;
 using EducationPortal.Web.Data.Entities;
@@ -58,6 +59,91 @@ namespace EducationPortal.Web.Controllers
             };
 
             return View(testDetailsViewModel);
+        }
+
+        [Authorize(Roles = "admin, tutor")]
+        public IActionResult Create(int id)
+        {
+            var test = _educationPortalDbContext.Tests
+                .Include(x => x.Questions)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            var createTestViewModel = new CreateTestDetailsViewModel
+            {
+                Id = id,
+                Name = test.Name,
+                Questions = test.Questions
+            };
+
+            return View(createTestViewModel);
+        }
+
+        [Authorize(Roles = "admin, tutor")]
+        public IActionResult AddQuestion(int id)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin, tutor")]
+        public IActionResult AddQuestion(CreateQuestionViewModel model, int id)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (model.File != null)
+            {
+                if (!model.File.ContentType.StartsWith("image/"))
+                {
+                    ModelState.AddModelError("File", "Пожалуйста выберите картинку!");
+                    return View(model);
+                }
+            }
+
+            var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            if (model.File != null)
+            {
+                UploadImageToDb(model, test);
+            }
+            else
+            {
+                test.Questions.Add(new Question
+                {
+                    Content = model.Content,
+                    QuestionType = model.QuestionType.Value
+                });
+
+                _educationPortalDbContext.SaveChanges();
+            }
+
+            return RedirectToAction("Create", "Tests", new { id });
+        }
+
+        [Authorize(Roles = "admin, tutor")]
+        public IActionResult DeleteQuestion(int id, int testId)
+        {
+            var question = _educationPortalDbContext.Questions.FirstOrDefault(x => x.Id == id);
+
+            if (question == null)
+            {
+                return RedirectToAction("Create", "Tests", new { id = testId });
+            }
+
+            _educationPortalDbContext.Questions.Remove(question);
+            _educationPortalDbContext.SaveChanges();
+
+            return RedirectToAction("Create", "Tests", new { id = testId });
         }
 
         [HttpPost]
@@ -347,6 +433,26 @@ namespace EducationPortal.Web.Controllers
             _educationPortalDbContext.SaveChanges();
 
             return newAttempt.Id;
+        }
+
+        private void UploadImageToDb(CreateQuestionViewModel model, Test test)
+        {
+            using (var ms = new MemoryStream())
+            {
+                model.File.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+
+                var educationMaterial = new Question
+                {
+                    Image = fileBytes,
+                    ImageContentType = model.File.ContentType,
+                    QuestionType = model.QuestionType.Value,
+                    Content = model.Content
+                };
+
+                test.Questions.Add(educationMaterial);
+                _educationPortalDbContext.SaveChanges();
+            }
         }
         #endregion
     }

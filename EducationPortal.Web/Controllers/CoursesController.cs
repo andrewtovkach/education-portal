@@ -128,10 +128,6 @@ namespace EducationPortal.Web.Controllers
             if (course == null)
                 return RedirectToAction("Index");
 
-            var moduleIds = _educationPortalDbContext.Modules.Where(x => x.CourseId == id).Select(x => x.Id);
-            var tests = _educationPortalDbContext.Tests.Where(x => moduleIds.Contains(x.ModuleId));
-
-            _educationPortalDbContext.Tests.RemoveRange(tests);
             _educationPortalDbContext.Courses.Remove(course);
             _educationPortalDbContext.SaveChanges();
 
@@ -384,16 +380,18 @@ namespace EducationPortal.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            module.Tests.Add(new Test
+            var test = new Test
             {
                 MaxNumberOfAttempts = model.MaxNumberOfAttempts.Value,
                 TimeLimit = model.TimeLimit.Value,
                 Name = model.Name
-            });
+            };
+
+            module.Tests.Add(test);
 
             _educationPortalDbContext.SaveChanges();
 
-            return RedirectToAction("Details", new { id = module.CourseId, moduleId = id });
+            return RedirectToAction("Create",  "Tests", new { id = test.Id });
         }
 
         [Authorize(Roles = "admin, tutor")]
