@@ -1,7 +1,7 @@
 ﻿@model TestNavViewModel
 
 <ul class="nav nav-pills flex-column">
-    @if (User.IsInRole("admin"))
+    @if (User.IsInRole("admin") || User.IsInRole("tutor"))
     {
     <li class="nav-item">
         <a class="nav-link @NavPages.PageNavClass(ViewContext, "AddTest")" asp-controller="Courses" asp-action="AddTest">Добавление теста</a>

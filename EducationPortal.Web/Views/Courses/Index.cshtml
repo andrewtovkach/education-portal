@@ -16,7 +16,7 @@
     <hr />
 </div>
 
-@if (User.IsInRole("admin"))
+@if (User.IsInRole("admin") || User.IsInRole("tutor"))
 {
     <a asp-action="Create" class="btn btn-primary" style="margin-bottom: 20px;">Добавить курс</a>
 }
@@ -42,8 +42,8 @@
             <td>
                 <form asp-action="Delete" asp-route-id="@course.Id" method="post">
                 <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id">Открыть</a>
-                
-                @if(User.IsInRole("admin")) 
+
+                @if(User.IsInRole("admin") || User.IsInRole("tutor")) 
                 {
                     <button type="submit" class="btn btn-sm btn-outline-danger">
                         Удалить

@@ -29,6 +29,15 @@
         })
     </div>
     <div class="col-md-9">
-        <embed src="~/Courses/EducationFileContent/@Model.Id" width="100%" height="800px" />
+        <embed src="~/Courses/EducationFileContent/@Model.Id" width="100%" />
     </div>
 </div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('embed').height($(window).height() - 220);
+        });
+    </script>
+}

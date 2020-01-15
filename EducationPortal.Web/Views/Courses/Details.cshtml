@@ -21,7 +21,7 @@
         @Html.Partial("_CoursesNav", Model.Courses)
     </div>
     <div class="col-md-9">
-        @if (User.IsInRole("admin"))
+        @if (User.IsInRole("admin") || User.IsInRole("tutor"))
         {
             <a asp-action="CreateModule" asp-controller="Courses" asp-route-id="@Model.CourseId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить модуль</a>
         }
@@ -55,7 +55,7 @@
         
         @if (Model.Modules.Any())
         {
-             if (User.IsInRole("admin"))
+             if (User.IsInRole("admin") || User.IsInRole("tutor"))
              {
                  <form asp-controller="Courses" asp-action="DeleteModule" asp-route-id="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post" class="float-right">
                      <button type="submit" class="btn btn-sm btn-danger">
@@ -65,7 +65,7 @@
              }
 
             <h3>Образовательные материалы</h3>
-            if (User.IsInRole("admin"))
+            if (User.IsInRole("admin") || User.IsInRole("tutor"))
             {
             <a asp-action="AddEducationMaterial" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить образовательный материал</a>
             }
@@ -88,7 +88,7 @@
                             <form asp-controller="Courses" asp-action="DeleteEducationMaterial" asp-route-id="@educationMaterial.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
                                 <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="EducationMaterial" asp-route-id="@educationMaterial.Id">Открыть</a>
 
-                                @if(User.IsInRole("admin"))
+                                @if(User.IsInRole("admin") || User.IsInRole("tutor"))
                                     {
                                         <button type="submit" class="btn btn-sm btn-outline-danger">
                                             Удалить
@@ -112,7 +112,7 @@
 
             <h3>Тесты</h3>
 
-            if (User.IsInRole("admin"))
+            if (User.IsInRole("admin") || User.IsInRole("tutor"))
             {
             <a asp-action="AddTest" asp-controller="Courses" asp-route-id="@Model.ActiveModuleId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить тест</a>
             }
@@ -124,7 +124,7 @@
                     <th scope="col">Количество вопросов</th>
                     <th scope="col">Время на тест</th>
                     
-                    @if (User.IsInRole("admin"))
+                    @if (User.IsInRole("admin") || User.IsInRole("tutor"))
                     {
                         <th scope="col">Количество попыток</th>
                     }
@@ -146,7 +146,7 @@
                         <td>@(test.Test.Questions?.Count ?? 0)</td>
                         <td>@test.Test.TimeLimit минут</td>
                         
-                        @if (User.IsInRole("admin"))
+                        @if (User.IsInRole("admin") || User.IsInRole("tutor"))
                         {
                             <td>@test.Test.MaxNumberOfAttempts</td>
                         }
@@ -211,7 +211,7 @@
                                  }
                             }
                             
-                            @if (User.IsInRole("admin"))
+                            @if (User.IsInRole("admin") || User.IsInRole("tutor"))
                             {
                                 <form asp-controller="Courses" asp-action="DeleteTest" asp-route-id="@test.Test.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">

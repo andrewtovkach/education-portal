@@ -1,7 +1,7 @@
 ﻿@model EducationMaterialNavViewModel
 
 <ul class="nav nav-pills flex-column">
-    @if (User.IsInRole("admin"))
+    @if (User.IsInRole("admin") || User.IsInRole("tutor"))
     {
         <li class="nav-item">
             <a class="nav-link @NavPages.PageNavClass(ViewContext, "AddEducationMaterial")" asp-controller="Courses" asp-action="AddEducationMaterial" asp-route-id="@Model.ModuleId">Добавление образовательного материала</a>
@@ -12,7 +12,7 @@
         <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Образовательные материалы</a>
     </li>
 
-    @foreach (var educationMaterial in Model.EducationMaterials.OrderByDescending(x => x.Name))
+    @foreach (var educationMaterial in Model.EducationMaterials.OrderBy(x => x.Name))
     {
         <li class="nav-item">
             <a class="nav-link @NavPages.PageNavClass(ViewContext, educationMaterial.Id.ToString())" asp-controller="Courses" asp-action="EducationMaterial" asp-route-id="@educationMaterial.Id">@educationMaterial.Name</a>

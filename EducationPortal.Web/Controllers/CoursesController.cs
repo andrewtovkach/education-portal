@@ -90,7 +90,7 @@ namespace EducationPortal.Web.Controllers
             return View(courseDetailsViewModel);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult Create()
         {
             ViewBag.Courses = _educationPortalDbContext.Courses;
@@ -99,7 +99,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult Create(CreateCourseViewModel model)
         {
             ViewBag.Courses = _educationPortalDbContext.Courses;
@@ -121,7 +121,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public ActionResult Delete(int id)
         {
             var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == id);
@@ -138,7 +138,7 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult CreateModule(int id)
         {
             var course = _educationPortalDbContext.Courses.Include(x => x.Modules)
@@ -157,7 +157,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult CreateModule(CreateModuleViewModel model, int id)
         {
             var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == id);
@@ -186,7 +186,7 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id, moduleId = module.Id });
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult DeleteModule(int id, int courseId)
         {
             var module = _educationPortalDbContext.Modules.FirstOrDefault(x => x.Id == id);
@@ -272,6 +272,7 @@ namespace EducationPortal.Web.Controllers
             }
         }
 
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult AddEducationMaterial(int id)
         {
             var module = _educationPortalDbContext.Modules.Include(x => x.EducationMaterials)
@@ -299,7 +300,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult AddEducationMaterial(CreateEducationMaterialViewModel model, int id)
         {
             var module = _educationPortalDbContext.Modules.FirstOrDefault(x => x.Id == id);
@@ -330,7 +331,7 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id = course.Id, moduleId = module.Id });
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult DeleteEducationMaterial(int id, int moduleId, int courseId)
         {
             var educationMaterial = _educationPortalDbContext.EducationMaterials.FirstOrDefault(x => x.Id == id);
@@ -346,7 +347,7 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id = courseId, moduleId });
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult AddTest(int id)
         {
             var module = _educationPortalDbContext.Modules.Include(x => x.Course).FirstOrDefault(x => x.Id == id);
@@ -365,7 +366,7 @@ namespace EducationPortal.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult AddTest(CreateTestViewModel model, int id)
         {
             var module = _educationPortalDbContext.Modules.Include(x => x.Course).FirstOrDefault(x => x.Id == id);
@@ -395,7 +396,7 @@ namespace EducationPortal.Web.Controllers
             return RedirectToAction("Details", new { id = module.CourseId, moduleId = id });
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, tutor")]
         public IActionResult DeleteTest(int id, int courseId, int moduleId)
         {
             var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == id);
