@@ -214,7 +214,7 @@
                             @if (User.IsInRole("admin") || User.IsInRole("tutor"))
                             {
                                 <form asp-controller="Courses" asp-action="DeleteTest" asp-route-id="@test.Test.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
-                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Create" asp-route-id="@test.Test.Id">Открыть</a>
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Info" asp-route-id="@test.Test.Id">Открыть</a>
 
                                     <button type="submit" class="btn btn-sm btn-outline-danger">
                                         Удалить

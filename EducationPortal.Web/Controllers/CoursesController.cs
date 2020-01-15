@@ -357,6 +357,7 @@ namespace EducationPortal.Web.Controllers
             ViewBag.CourseName = module.Course.Name;
             ViewBag.ModuleId = module.Id;
             ViewBag.ModuleName = module.Name;
+            ViewBag.Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == module.Id);
 
             return View();
         }
@@ -376,6 +377,7 @@ namespace EducationPortal.Web.Controllers
             ViewBag.CourseName = module.Course.Name;
             ViewBag.ModuleId = module.Id;
             ViewBag.ModuleName = module.Name;
+            ViewBag.Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == module.Id);
 
             if (!ModelState.IsValid)
                 return View(model);
@@ -391,7 +393,7 @@ namespace EducationPortal.Web.Controllers
 
             _educationPortalDbContext.SaveChanges();
 
-            return RedirectToAction("Create",  "Tests", new { id = test.Id });
+            return RedirectToAction("Info",  "Tests", new { id = test.Id });
         }
 
         [Authorize(Roles = "admin, tutor")]

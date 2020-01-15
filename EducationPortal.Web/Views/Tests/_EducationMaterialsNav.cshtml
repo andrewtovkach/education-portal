@@ -4,7 +4,7 @@
     @foreach (var educationMaterial in Model)
     {
         <li class="nav-item">
-            <a class="nav-link" asp-controller="Courses" asp-action="EducationFileContent" asp-route-id="@educationMaterial.Id">@educationMaterial.Name</a>
+            <a class="nav-link" asp-controller="Courses" asp-action="EducationMaterial" asp-route-id="@educationMaterial.Id">@educationMaterial.Name</a>
         </li>
     }
 </ul>

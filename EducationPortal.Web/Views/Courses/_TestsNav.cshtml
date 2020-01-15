@@ -4,12 +4,19 @@
     @if (User.IsInRole("admin") || User.IsInRole("tutor"))
     {
     <li class="nav-item">
-        <a class="nav-link @NavPages.PageNavClass(ViewContext, "AddTest")" asp-controller="Courses" asp-action="AddTest">Добавление теста</a>
+        <a class="nav-link @NavPages.PageNavClass(ViewContext, "AddTest")" asp-controller="Courses" asp-action="AddTest" asp-route-id="@Model.ModuleId">Добавление теста</a>
     </li>
     }
 
     <li class="nav-item">
         <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Тесты</a>
     </li>
+    
+    @foreach (var test in Model.Tests)
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, test.Id.ToString())" asp-controller="Tests" asp-action="Info" asp-route-id="@test.Id">Тест @test.Name</a>
+        </li>
+    }
 </ul>
 <br />

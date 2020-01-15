@@ -59,12 +59,6 @@ table thead th {
     text-align: center;
 }
 
-.course-complexity {
-    display: flex;
-    justify-content: center; /* align horizontal */
-    align-items: center;
-}
-
 table tbody td {
     text-align: center;
 }

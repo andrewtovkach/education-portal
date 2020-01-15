@@ -62,9 +62,11 @@ namespace EducationPortal.Web.Controllers
         }
 
         [Authorize(Roles = "admin, tutor")]
-        public IActionResult Create(int id)
+        public IActionResult Info(int id)
         {
             var test = _educationPortalDbContext.Tests
+                .Include(x => x.Module)
+                .ThenInclude(x => x.Course)
                 .Include(x => x.Questions)
                 .FirstOrDefault(x => x.Id == id);
 
@@ -72,6 +74,12 @@ namespace EducationPortal.Web.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.CourseId = test.Module.CourseId;
+            ViewBag.CourseName = test.Module.Course.Name;
+            ViewBag.ModuleId = test.ModuleId;
+            ViewBag.ModuleName = test.Module.Name;
+            ViewBag.Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == test.ModuleId);
 
             var createTestViewModel = new CreateTestDetailsViewModel
             {
@@ -86,6 +94,23 @@ namespace EducationPortal.Web.Controllers
         [Authorize(Roles = "admin, tutor")]
         public IActionResult AddQuestion(int id)
         {
+            var test = _educationPortalDbContext.Tests
+                .Include(x => x.Module)
+                .ThenInclude(x => x.Course)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = test.Module.CourseId;
+            ViewBag.CourseName = test.Module.Course.Name;
+            ViewBag.ModuleId = test.ModuleId;
+            ViewBag.ModuleName = test.Module.Name;
+            ViewBag.TestId = test.Id;
+            ViewBag.TestName = test.Name;
+
             return View();
         }
 
@@ -93,6 +118,23 @@ namespace EducationPortal.Web.Controllers
         [Authorize(Roles = "admin, tutor")]
         public IActionResult AddQuestion(CreateQuestionViewModel model, int id)
         {
+            var test = _educationPortalDbContext.Tests
+                .Include(x => x.Module)
+                .ThenInclude(x => x.Course)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = test.Module.CourseId;
+            ViewBag.CourseName = test.Module.Course.Name;
+            ViewBag.ModuleId = test.ModuleId;
+            ViewBag.ModuleName = test.Module.Name;
+            ViewBag.TestId = test.Id;
+            ViewBag.TestName = test.Name;
+
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -103,13 +145,6 @@ namespace EducationPortal.Web.Controllers
                     ModelState.AddModelError("File", "Пожалуйста выберите картинку!");
                     return View(model);
                 }
-            }
-
-            var test = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == id);
-
-            if (test == null)
-            {
-                return NotFound();
             }
 
             if (model.File != null)
@@ -127,7 +162,7 @@ namespace EducationPortal.Web.Controllers
                 _educationPortalDbContext.SaveChanges();
             }
 
-            return RedirectToAction("Create", "Tests", new { id });
+            return RedirectToAction("Info", "Tests", new { id });
         }
 
         [Authorize(Roles = "admin, tutor")]
@@ -137,13 +172,13 @@ namespace EducationPortal.Web.Controllers
 
             if (question == null)
             {
-                return RedirectToAction("Create", "Tests", new { id = testId });
+                return RedirectToAction("Info", "Tests", new { id = testId });
             }
 
             _educationPortalDbContext.Questions.Remove(question);
             _educationPortalDbContext.SaveChanges();
 
-            return RedirectToAction("Create", "Tests", new { id = testId });
+            return RedirectToAction("Info", "Tests", new { id = testId });
         }
 
         [HttpPost]
