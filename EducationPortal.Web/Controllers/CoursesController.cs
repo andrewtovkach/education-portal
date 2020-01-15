@@ -271,7 +271,9 @@ namespace EducationPortal.Web.Controllers
         [Authorize(Roles = "admin, tutor")]
         public IActionResult AddEducationMaterial(int id)
         {
-            var module = _educationPortalDbContext.Modules.Include(x => x.EducationMaterials)
+            var module = _educationPortalDbContext.Modules
+                .Include(x => x.Course)
+                .Include(x => x.EducationMaterials)
                 .FirstOrDefault(x => x.Id == id);
 
             if (module == null)
@@ -279,15 +281,8 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
-            var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == module.CourseId);
-
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.CourseId = course.Id;
-            ViewBag.CourseName = course.Name;
+            ViewBag.CourseId = module.CourseId;
+            ViewBag.CourseName = module.Course.Name;
             ViewBag.ModuleId = module.Id;
             ViewBag.ModuleName = module.Name;
             ViewBag.EducationMaterials = module.EducationMaterials;
@@ -299,22 +294,17 @@ namespace EducationPortal.Web.Controllers
         [Authorize(Roles = "admin, tutor")]
         public IActionResult AddEducationMaterial(CreateEducationMaterialViewModel model, int id)
         {
-            var module = _educationPortalDbContext.Modules.FirstOrDefault(x => x.Id == id);
+            var module = _educationPortalDbContext.Modules
+                .Include(x => x.Course)
+                .FirstOrDefault(x => x.Id == id);
 
             if (module == null)
             {
                 return NotFound();
             }
 
-            var course = _educationPortalDbContext.Courses.FirstOrDefault(x => x.Id == module.CourseId);
-
-            if (course == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.CourseId = course.Id;
-            ViewBag.CourseName = course.Name;
+            ViewBag.CourseId = module.CourseId;
+            ViewBag.CourseName = module.Course.Name;
             ViewBag.ModuleId = module.Id;
             ViewBag.ModuleName = module.Name;
             ViewBag.EducationMaterials = module.EducationMaterials;
@@ -324,7 +314,7 @@ namespace EducationPortal.Web.Controllers
 
             UploadFileToDb(model, module);
 
-            return RedirectToAction("Details", new { id = course.Id, moduleId = module.Id });
+            return RedirectToAction("Details", new { id = module.CourseId, moduleId = module.Id });
         }
 
         [Authorize(Roles = "admin, tutor")]
