@@ -17,10 +17,10 @@ namespace EducationPortal.Web.Controllers
     [Authorize]
     public class CoursesController : Controller
     {
-        private readonly EducationPortalDbContext _educationPortalDbContext;
+        private readonly ApplicationDbContext _educationPortalDbContext;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public CoursesController(EducationPortalDbContext educationPortalDbContext,
+        public CoursesController(ApplicationDbContext educationPortalDbContext,
             UserManager<IdentityUser> userManager)
         {
             _educationPortalDbContext = educationPortalDbContext;

@@ -8,9 +8,9 @@ namespace EducationPortal.Web.Controllers
 {
     public class ImagesController : Controller
     {
-        private readonly EducationPortalDbContext _educationPortalDbContext;
+        private readonly ApplicationDbContext _educationPortalDbContext;
 
-        public ImagesController(EducationPortalDbContext educationPortalDbContext)
+        public ImagesController(ApplicationDbContext educationPortalDbContext)
         {
             _educationPortalDbContext = educationPortalDbContext;
         }

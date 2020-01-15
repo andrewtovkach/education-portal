@@ -19,9 +19,9 @@ namespace EducationPortal.Web.Controllers
     public class TestsController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly EducationPortalDbContext _educationPortalDbContext;
+        private readonly ApplicationDbContext _educationPortalDbContext;
 
-        public TestsController(EducationPortalDbContext educationPortalDbContext,
+        public TestsController(ApplicationDbContext educationPortalDbContext,
             UserManager<IdentityUser> userManager)
         {
             _educationPortalDbContext = educationPortalDbContext;

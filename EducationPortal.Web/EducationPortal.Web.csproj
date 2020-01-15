@@ -6,21 +6,6 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Migrations\20191217081959_InitialMigration.cs" />
-    <Compile Remove="Migrations\20191217081959_InitialMigration.Designer.cs" />
-    <Compile Remove="Migrations\20191217082515_InitialMigration.cs" />
-    <Compile Remove="Migrations\20191217082515_InitialMigration.Designer.cs" />
-    <Compile Remove="Migrations\20191217083417_InitialMigration.cs" />
-    <Compile Remove="Migrations\20191217083417_InitialMigration.Designer.cs" />
-    <Compile Remove="Migrations\20191217092401_InitialMigration.cs" />
-    <Compile Remove="Migrations\20191217092401_InitialMigration.Designer.cs" />
-    <Compile Remove="Migrations\20191217093148_Initialmigration.cs" />
-    <Compile Remove="Migrations\20191217093148_Initialmigration.Designer.cs" />
-    <Compile Remove="Migrations\20191217093304_Initialmigration.cs" />
-    <Compile Remove="Migrations\20191217093304_Initialmigration.Designer.cs" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="FreeSpire.Doc" Version="7.11.0" />
