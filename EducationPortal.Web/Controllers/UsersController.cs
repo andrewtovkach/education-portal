@@ -30,7 +30,12 @@ namespace EducationPortal.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = new IdentityUser { Email = model.Email, UserName = model.Email };
+            var user = new IdentityUser
+            {
+                Email = model.Email,
+                UserName = model.Email
+            };
+
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
@@ -54,7 +59,12 @@ namespace EducationPortal.Web.Controllers
             {
                 return NotFound();
             }
-            var model = new EditUserViewModel { Id = user.Id, Email = user.Email };
+
+            var model = new EditUserViewModel
+            {
+                Id = user.Id,
+                Email = user.Email
+            };
 
             return View(model);
         }
@@ -103,7 +113,12 @@ namespace EducationPortal.Web.Controllers
             {
                 return NotFound();
             }
-            var model = new ChangePasswordViewModel { Id = user.Id, Email = user.Email };
+
+            var model = new ChangePasswordViewModel
+            {
+                Id = user.Id,
+                Email = user.Email
+            };
 
             return View(model);
         }
@@ -175,7 +190,6 @@ namespace EducationPortal.Web.Controllers
             var removedRoles = userRoles.Except(roles);
 
             await _userManager.AddToRolesAsync(user, addedRoles);
-
             await _userManager.RemoveFromRolesAsync(user, removedRoles);
 
             return RedirectToAction("Index", "Users");

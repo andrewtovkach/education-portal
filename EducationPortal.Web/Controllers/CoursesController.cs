@@ -29,13 +29,12 @@ namespace EducationPortal.Web.Controllers
 
         public IActionResult Index()
         {
-            if (User.IsInRole("tutor"))
-            {
-                var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
-                return View(_educationPortalDbContext.Courses.Where(x => x.CreatedBy == Guid.Parse(userId)));
-            }
+            if (!User.IsInRole("tutor"))
+                return View(_educationPortalDbContext.Courses);
 
-            return View(_educationPortalDbContext.Courses);
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+            return View(_educationPortalDbContext.Courses.Where(x => x.CreatedBy == Guid.Parse(userId)));
+
         }
 
         public IActionResult Details(int id, int? moduleId)
@@ -167,7 +166,7 @@ namespace EducationPortal.Web.Controllers
 
             ViewBag.CourseId = course.Id;
             ViewBag.CourseName = course.Name;
-            ViewBag.Modules = course.Modules;
+            ViewBag.Modules = course.Modules; 
 
             return View();
         }
