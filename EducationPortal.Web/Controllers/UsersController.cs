@@ -20,7 +20,7 @@ namespace EducationPortal.Web.Controllers
             _roleManager = roleManager;
         }
 
-        public IActionResult Index() => View(_userManager.Users.ToList());
+        public IActionResult Index() => View(_userManager.Users.Where(x => x.Email != "admin@gmail.com").ToList());
 
         public IActionResult Create() => View();
 
@@ -34,7 +34,7 @@ namespace EducationPortal.Web.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "user");
+                await _userManager.AddToRoleAsync(user, "student");
 
                 return RedirectToAction("Index");
             }

@@ -6,7 +6,7 @@ namespace EducationPortal.Web
 {
     public class RolesInitializer
     {
-        public static IEnumerable<string> RoleNamesCollection = new List<string> { "admin", "tutor", "user" };
+        public static IEnumerable<string> RoleNamesCollection = new List<string> { "admin", "tutor", "student" };
         private const string AdminEmail = "admin@gmail.com";
         private const string AdminPassword = "Admin123456@";
 

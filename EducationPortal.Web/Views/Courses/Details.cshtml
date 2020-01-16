@@ -129,7 +129,7 @@
                         <th scope="col">Количество попыток</th>
                     }
 
-                    @if (User.IsInRole("user"))
+                    @if (User.IsInRole("student"))
                     {
                         <th scope="col">Количество сдач</th>
                         <th scope="col">Средний результат</th>
@@ -151,7 +151,7 @@
                             <td>@test.Test.MaxNumberOfAttempts</td>
                         }
 
-                        @if (User.IsInRole("user"))
+                        @if (User.IsInRole("student"))
                         {
                             <td>
                                 <span class="badge badge-primary">@test.AttemptsCount / @test.Test.MaxNumberOfAttempts</span>
@@ -180,7 +180,7 @@
                         }
 
                         <td>
-                            @if (User.IsInRole("user"))
+                            @if (User.IsInRole("student"))
                             {
                                  if (test.HasTestCompletions)
                                  {
@@ -234,7 +234,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        @if (User.IsInRole("user"))
+                        @if (User.IsInRole("student"))
                         {
                             <td></td>
                         }
