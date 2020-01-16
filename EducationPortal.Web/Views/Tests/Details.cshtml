@@ -21,38 +21,32 @@
 
 <div class="row">
     <div class="col-md-3">
-        <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">Модуль @Model.ModuleName</a>
-            </li>
-        </ul>
-
-        <ul class="nav nav-pills flex-column">
-        <li class="nav-item">
-            <a class="nav-link" href="#" style="color: black; cursor: default;">Образовательные материалы</a>
-        </li>
-        </ul>
-
-        @Html.Partial("_EducationMaterialsNav", Model.EducationMaterials)
-
-
-        <ul class="nav nav-pills flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="#" style="color: black; cursor: default;">Тесты</a>
-            </li>
-        </ul>
-
-        @Html.Partial("_TestsInfoNav", Model.Tests)
+        @Html.Partial("../Courses/_TestsNav", new TestNavViewModel
+        {
+            CourseId = Model.CourseId,
+            ModuleId = Model.ModuleId,
+            Tests = Model.Tests,
+            ModuleName = Model.ModuleName
+        })
     </div>
     <div class="col-md-9">
         <div class="flex-container">
             <div></div>
             <div style="font-family: 'Roboto', sans-serif; font-size: 20px;" ><b id="timer"></b></div>
         </div>
+        
+        <div id="alertElement" class="alert alert-info" role="alert" style="display: none">
+            Вопросы не найдены!
+        </div>
 
         <form id="test-form" method="post" action="~/Tests/FinishTest/@Model.TestId" class="form">
             @foreach (var question in Model.Questions)
             {
+                if (question.Question.Answers == null || question.Question.Answers.Count == 0)
+                {
+                    continue;
+                }
+
                 <div class="card">
                     @switch (question.Question.QuestionType)
                     {
@@ -141,17 +135,23 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip();
 
-            $("#timer")
-                .countdown(addMinutesToDate(new Date(), @Model.TimeLimit),
-                    function(event) {
-                        if (event.type === "finish") {
-                            $("#test-form").submit();
-                        } else {
-                            $(this).text(
-                                event.strftime('%H:%M:%S')
-                            );
-                        }
-                    });
+            console.log();
+            if ($('.card').length === 0) {
+                $('.finish-test-container').hide();
+                $('#alertElement').css('display', 'block');
+            } else {
+                $("#timer")
+                    .countdown(addMinutesToDate(new Date(), @Model.TimeLimit),
+                        function(event) {
+                            if (event.type === "finish") {
+                                $("#test-form").submit();
+                            } else {
+                                $(this).text(
+                                    event.strftime('%H:%M:%S')
+                                );
+                            }
+                        });
+            }
 
             $('.custom-control-label').click(function() {
                 var inputElement = $(this).parent().children().first();

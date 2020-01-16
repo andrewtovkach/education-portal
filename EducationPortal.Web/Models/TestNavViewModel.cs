@@ -7,6 +7,7 @@ namespace EducationPortal.Web.Models
     {
         public int CourseId { get; set; }
         public int ModuleId { get; set; }
+        public string ModuleName { get; set; }
         public IEnumerable<Test> Tests { get; set; }
     }
 }

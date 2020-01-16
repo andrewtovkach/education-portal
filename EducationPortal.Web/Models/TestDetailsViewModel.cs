@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using EducationPortal.Web.Data.Entities;
 
 namespace EducationPortal.Web.Models
@@ -18,6 +17,5 @@ namespace EducationPortal.Web.Models
         public int TimeLimit { get; set; }
         public IEnumerable<QuestionViewModel> Questions { get; set; }
         public IEnumerable<Test> Tests { get; set; }
-        public IEnumerable<EducationMaterial> EducationMaterials { get; set; }
     }
 }

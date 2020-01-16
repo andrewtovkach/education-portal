@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EducationPortal.Web.Data.Enums;
 
 namespace EducationPortal.Web.Data.Entities
@@ -10,6 +11,7 @@ namespace EducationPortal.Web.Data.Entities
         public int TrainingHours { get; set; }
         public CourseComplexity CourseComplexity { get; set; }
         public ICollection<Module> Modules { get; set; }
+        public Guid CreatedBy { get; set; }
 
         public Course()
         {

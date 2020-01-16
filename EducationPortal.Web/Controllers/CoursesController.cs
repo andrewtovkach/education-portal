@@ -29,6 +29,12 @@ namespace EducationPortal.Web.Controllers
 
         public IActionResult Index()
         {
+            if (User.IsInRole("tutor"))
+            {
+                var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+                return View(_educationPortalDbContext.Courses.Where(x => x.CreatedBy == Guid.Parse(userId)));
+            }
+
             return View(_educationPortalDbContext.Courses);
         }
 
@@ -47,6 +53,11 @@ namespace EducationPortal.Web.Controllers
                 return NotFound();
             }
 
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+            var courses = User.IsInRole("tutor")
+                ? _educationPortalDbContext.Courses.Where(x => x.CreatedBy == Guid.Parse(userId)).ToList()
+                : _educationPortalDbContext.Courses.ToList();
+
             if (!moduleId.HasValue)
             {
                 var firstModule = course.Modules.FirstOrDefault();
@@ -55,7 +66,7 @@ namespace EducationPortal.Web.Controllers
                 {
                     return View(new CourseDetailsViewModel
                     {
-                        Courses = _educationPortalDbContext.Courses,
+                        Courses = courses,
                         CourseId = course.Id,
                         CourseName = course.Name,
                         Modules = new List<Module>(),
@@ -78,7 +89,7 @@ namespace EducationPortal.Web.Controllers
 
             var courseDetailsViewModel = new CourseDetailsViewModel
             {
-                Courses = _educationPortalDbContext.Courses,
+                Courses = courses,
                 CourseId = course.Id,
                 CourseName = course.Name,
                 Modules = course.Modules,
@@ -93,7 +104,11 @@ namespace EducationPortal.Web.Controllers
         [Authorize(Roles = "admin, tutor")]
         public IActionResult Create()
         {
-            ViewBag.Courses = _educationPortalDbContext.Courses;
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+
+            ViewBag.Courses = User.IsInRole("tutor")
+                ? _educationPortalDbContext.Courses.Where(x => x.CreatedBy == Guid.Parse(userId)).ToList()
+                : _educationPortalDbContext.Courses.ToList();
 
             return View();
         }
@@ -102,7 +117,11 @@ namespace EducationPortal.Web.Controllers
         [Authorize(Roles = "admin, tutor")]
         public IActionResult Create(CreateCourseViewModel model)
         {
-            ViewBag.Courses = _educationPortalDbContext.Courses;
+            var userId = _userManager.Users.FirstOrDefault(x => x.UserName == User.Identity.Name)?.Id;
+
+            ViewBag.Courses = User.IsInRole("tutor")
+                ? _educationPortalDbContext.Courses.Where(x => x.CreatedBy == Guid.Parse(userId)).ToList()
+                : _educationPortalDbContext.Courses.ToList();
 
             if (!ModelState.IsValid)
                 return View(model);
@@ -111,7 +130,8 @@ namespace EducationPortal.Web.Controllers
             {
                 Name = model.Name,
                 CourseComplexity = model.CourseComplexity.Value,
-                TrainingHours = model.TrainingHours.Value
+                TrainingHours = model.TrainingHours.Value,
+                CreatedBy = Guid.Parse(userId)
             };
 
             var courseEntity = _educationPortalDbContext.Courses.Add(course);

@@ -54,8 +54,7 @@ namespace EducationPortal.Web.Controllers
                 CourseName = test.Module.Course.Name,
                 ModuleId = test.ModuleId,
                 ModuleName = test.Module.Name,
-                Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == test.ModuleId),
-                EducationMaterials = _educationPortalDbContext.EducationMaterials.Where(x => x.ModuleId == test.ModuleId)
+                Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == test.ModuleId)
             };
 
             return View(testDetailsViewModel);

@@ -27,6 +27,9 @@ namespace EducationPortal.Web.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Course>()
+                .Property(x => x.CreatedBy).IsRequired();
+
             modelBuilder.Entity<Module>()
                 .HasOne(c => c.Course)
                 .WithMany(c => c.Modules);

@@ -53,5 +53,15 @@
             </td>
         </tr>
         }
+    
+        @if (!Model.Any())
+        {
+            <tr scope="row">
+                <td>Учебные курсы не найдены!</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
     </tbody>
 </table>

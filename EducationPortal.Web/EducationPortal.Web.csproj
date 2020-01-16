@@ -6,6 +6,11 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20200115150759_AddedUserAssignment.cs" />
+    <Compile Remove="Migrations\20200115150759_AddedUserAssignment.Designer.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="FreeSpire.Doc" Version="7.11.0" />
