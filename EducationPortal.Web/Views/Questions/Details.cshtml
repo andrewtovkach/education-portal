@@ -1,0 +1,62 @@
+﻿@model QuestionDetailsViewModel
+@{
+    ViewData["Title"] = $"Вопрос {Model.QuestionContent}";
+    ViewData["ActivePage"] = Model.QuestionId.ToString();
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId">Курс @ViewBag.CourseName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId" asp-route-moduleId="@ViewBag.ModuleId">Модуль @ViewBag.ModuleName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Tests" asp-action="Info" asp-route-id="@ViewBag.TestId">Тест @ViewBag.TestName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Вопрос @Model.QuestionContent</li>
+    </ol>
+</nav>
+
+<div class="page-header">
+    <h1>Вопрос: @Model.QuestionContent</h1>
+    <hr />
+
+    <a asp-action="AddAnswer" asp-controller="Questions" asp-route-id="@Model.QuestionId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить ответ</a>
+
+    <table class="table table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Контент</th>
+                <th scope="col">Правильный?</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var answer in Model.Answers)
+            {
+                <tr scope="row">
+                    <td>@answer.Content</td>
+                    <td>@{ var isCorrect = answer.IsCorrect ? "Да" : "Нет"; }
+                        @isCorrect</td>
+                    <td>
+                        <form asp-controller="Questions" asp-action="DeleteAnswer" asp-route-id="@answer.Id" asp-route-questionId="@Model.QuestionId" method="post">
+                            @if (User.IsInRole("admin") || User.IsInRole("tutor"))
+                            {
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    Удалить
+                                </button>
+                            }
+                        </form>
+                    </td>
+                </tr>
+            }
+
+            @if (!Model.Answers.Any())
+            {
+                <tr scope="row">
+                    <td>Ответы не найдены!</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

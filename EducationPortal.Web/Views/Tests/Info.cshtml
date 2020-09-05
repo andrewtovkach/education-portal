@@ -61,6 +61,8 @@
 
                 <td>
                     <form asp-controller="Tests" asp-action="DeleteQuestion" asp-route-id="@question.Id" asp-route-testId="@Model.Id" method="post">
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Questions" asp-action="Details" asp-route-id="@question.Id">Открыть</a>
+
                         <button type="submit" class="btn btn-sm btn-outline-danger">
                             Удалить
                         </button>

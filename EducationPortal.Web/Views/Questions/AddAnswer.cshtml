@@ -1,0 +1,28 @@
+﻿@model CreateAnswerViewModel
+
+@{
+    ViewData["Title"] = "Добавление ответа";
+    ViewData["ActivePage"] = "AddAnswer";
+}
+
+<div class="page-header">
+    <h1>Добавление ответа</h1>
+    <hr />
+</div>
+
+ <form asp-action="AddAnswer" asp-controller="Tests" method="post" enctype="multipart/form-data">
+     <div asp-validation-summary="All" class="text-danger"></div>
+     <div class="form-group">
+         <label asp-for="Content" class="control-label">Контент</label>
+         <textarea asp-for="Content" class="form-control"></textarea>
+         <span asp-validation-for="Content" class="text-danger"></span>
+     </div>
+     <div class="form-group">
+         <label asp-for="IsCorrect" class="control-label">Правильный?</label>
+         <input type="checkbox" asp-for="IsCorrect" class="form-control" />
+         <span asp-validation-for="IsCorrect" class="text-danger"></span>
+     </div>
+     <div class="form-group">
+         <input type="submit" value="Добавить" class="btn btn-primary" />
+     </div>
+ </form>
