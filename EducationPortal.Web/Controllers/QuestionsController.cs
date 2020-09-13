@@ -45,6 +45,7 @@ namespace EducationPortal.Web.Controllers
 
             var questionDetailsViewModel = new QuestionDetailsViewModel
             {
+                TestId = question.TestId,
                 QuestionId = question.Id,
                 QuestionContent = question.Content,
                 Answers = question.Answers
@@ -74,6 +75,7 @@ namespace EducationPortal.Web.Controllers
             ViewBag.ModuleName = question.Test.Module.Name;
             ViewBag.TestId = question.Test.Id;
             ViewBag.TestName = question.Test.Name;
+            ViewBag.QuestionId = question.Id;
 
             return View();
         }
@@ -99,6 +101,7 @@ namespace EducationPortal.Web.Controllers
             ViewBag.ModuleName = question.Test.Module.Name;
             ViewBag.TestId = question.Test.Id;
             ViewBag.TestName = question.Test.Name;
+            ViewBag.QuestionId = question.Id;
 
             if (!ModelState.IsValid)
                 return View(model);

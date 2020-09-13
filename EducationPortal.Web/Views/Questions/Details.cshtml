@@ -17,46 +17,60 @@
 <div class="page-header">
     <h1>Вопрос: @Model.QuestionContent</h1>
     <hr />
+</div>
 
-    <a asp-action="AddAnswer" asp-controller="Questions" asp-route-id="@Model.QuestionId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить ответ</a>
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_AnswersNav.cshtml", new AnswerNavViewModel
+        {
+            TestId = Model.TestId,
+            QuestionId = Model.QuestionId
+        })
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <a asp-action="AddAnswer" asp-controller="Questions" asp-route-id="@Model.QuestionId" class="btn btn-primary" style="margin-bottom: 20px;">Добавить ответ</a>
 
-    <table class="table table-hover">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Контент</th>
-                <th scope="col">Правильный?</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var answer in Model.Answers)
-            {
-                <tr scope="row">
-                    <td>@answer.Content</td>
-                    <td>@{ var isCorrect = answer.IsCorrect ? "Да" : "Нет"; }
-                        @isCorrect</td>
-                    <td>
-                        <form asp-controller="Questions" asp-action="DeleteAnswer" asp-route-id="@answer.Id" asp-route-questionId="@Model.QuestionId" method="post">
-                            @if (User.IsInRole("admin") || User.IsInRole("tutor"))
-                            {
-                                <button type="submit" class="btn btn-sm btn-outline-danger">
-                                    Удалить
-                                </button>
-                            }
-                        </form>
-                    </td>
-                </tr>
-            }
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Контент</th>
+                        <th scope="col">Правильный?</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var answer in Model.Answers)
+                    {
+                        <tr scope="row">
+                            <td>@answer.Content</td>
+                            <td>
+                                @{ var isCorrect = answer.IsCorrect ? "Да" : "Нет"; }
+                                @isCorrect
+                            </td>
+                            <td>
+                                <form asp-controller="Questions" asp-action="DeleteAnswer" asp-route-id="@answer.Id" asp-route-questionId="@Model.QuestionId" method="post">
+                                    @if (User.IsInRole("admin") || User.IsInRole("tutor"))
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Удалить
+                                        </button>
+                                    }
+                                </form>
+                            </td>
+                        </tr>
+                    }
 
-            @if (!Model.Answers.Any())
-            {
-                <tr scope="row">
-                    <td>Ответы не найдены!</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
+                    @if (!Model.Answers.Any())
+                    {
+                        <tr scope="row">
+                            <td>Ответы не найдены!</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

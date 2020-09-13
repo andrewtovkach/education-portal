@@ -146,22 +146,26 @@ namespace EducationPortal.Web.Controllers
                 }
             }
 
+            Question question = null;
+
             if (model.File != null)
             {
-                UploadImageToDb(model, test);
+                question = UploadImageToDb(model, test);
             }
             else
             {
-                test.Questions.Add(new Question
+                question = new Question
                 {
                     Content = model.Content,
                     QuestionType = model.QuestionType.Value
-                });
+                };
+
+                test.Questions.Add(question);
 
                 _educationPortalDbContext.SaveChanges();
             }
 
-            return RedirectToAction("Info", "Tests", new { id });
+            return RedirectToAction("Details", "Questions", new { id = question.Id });
         }
 
         [Authorize(Roles = "admin, tutor")]
@@ -469,14 +473,14 @@ namespace EducationPortal.Web.Controllers
             return newAttempt.Id;
         }
 
-        private void UploadImageToDb(CreateQuestionViewModel model, Test test)
+        private Question UploadImageToDb(CreateQuestionViewModel model, Test test)
         {
             using (var ms = new MemoryStream())
             {
                 model.File.CopyTo(ms);
                 var fileBytes = ms.ToArray();
 
-                var educationMaterial = new Question
+                var question = new Question
                 {
                     Image = fileBytes,
                     ImageContentType = model.File.ContentType,
@@ -484,8 +488,10 @@ namespace EducationPortal.Web.Controllers
                     Content = model.Content
                 };
 
-                test.Questions.Add(educationMaterial);
+                test.Questions.Add(question);
                 _educationPortalDbContext.SaveChanges();
+
+                return question;
             }
         }
         #endregion

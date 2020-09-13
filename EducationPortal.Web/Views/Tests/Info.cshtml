@@ -19,68 +19,68 @@
 </div>
 
 <div class="row">
-<div class="col-md-3">
-    @Html.Partial("../Courses/_TestsNav", new TestNavViewModel
-    {
-        CourseId = ViewBag.CourseId,
-        ModuleId = ViewBag.ModuleId,
-        Tests = ViewBag.Tests,
-        ModuleName = ViewBag.ModuleName
-    })
-</div>
-<div class="col-md-9">
-    <div class="row">
-        <a asp-action="AddQuestion" asp-controller="Tests" asp-route-id="@Model.Id" class="btn btn-primary" style="margin-bottom: 20px;">Добавить вопрос</a>
-
-        <table class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th>Контент</th>
-                    <th>Тип вопроса</th>
-                    <th>Наличие картинки</th>
-                    <th></th>
-                </tr>
-            </thead>
-
-            @foreach (var question in Model.Questions)
-            {
-            <tr>
-                <td>@question.Content</td>
-                <td>@question.QuestionTypeString</td>
-
-                @if (question.HasImage)
-                    {
-                <td>
-                    <img src="~/icons/plus.svg" height="20px" />
-                </td>
-                    }
-                    else
-                    {
-                <td></td>
-                    }
-
-                <td>
-                    <form asp-controller="Tests" asp-action="DeleteQuestion" asp-route-id="@question.Id" asp-route-testId="@Model.Id" method="post">
-                        <a class="btn btn-sm btn-outline-primary" asp-controller="Questions" asp-action="Details" asp-route-id="@question.Id">Открыть</a>
-
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            Удалить
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            }
-
-            @if (!Model.Questions.Any())
-            {
-            <tr scope="row">
-                <td>Вопросы не найдены!</td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            }
-        </table>
+    <div class="col-md-3">
+        @Html.Partial("../Courses/_TestsNav", new TestNavViewModel
+        {
+            CourseId = ViewBag.CourseId,
+            ModuleId = ViewBag.ModuleId,
+            Tests = ViewBag.Tests,
+            ModuleName = ViewBag.ModuleName
+        })
     </div>
-</div>
+    <div class="col-md-9">
+        <div class="row">
+            <a asp-action="AddQuestion" asp-controller="Tests" asp-route-id="@Model.Id" class="btn btn-primary" style="margin-bottom: 20px;">Добавить вопрос</a>
+
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th style="width: 30%">Контент</th>
+                        <th>Тип вопроса</th>
+                        <th>Наличие картинки</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                @foreach (var question in Model.Questions)
+                {
+                <tr>
+                    <td>@question.Content</td>
+                    <td>@question.QuestionTypeString</td>
+
+                    @if (question.HasImage)
+                        {
+                    <td>
+                        <img src="~/icons/plus.svg" height="20px" />
+                    </td>
+                        }
+                        else
+                        {
+                    <td></td>
+                        }
+
+                    <td>
+                        <form asp-controller="Tests" asp-action="DeleteQuestion" asp-route-id="@question.Id" asp-route-testId="@Model.Id" method="post">
+                            <a class="btn btn-sm btn-outline-primary" asp-controller="Questions" asp-action="Details" asp-route-id="@question.Id">Открыть</a>
+
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Удалить
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                }
+
+                @if (!Model.Questions.Any())
+                {
+                <tr scope="row">
+                    <td>Вопросы не найдены!</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                }
+            </table>
+        </div>
+    </div>
 </div>

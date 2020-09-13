@@ -1,0 +1,19 @@
+﻿@model AnswerNavViewModel
+
+<ul class="nav nav-pills flex-column">
+    @if (User.IsInRole("admin") || User.IsInRole("tutor"))
+    {
+        <li class="nav-item">
+            <a class="nav-link @NavPages.PageNavClass(ViewContext, "AddAnswer")" asp-controller="Questions" asp-action="AddAnswer" asp-route-id="@Model.QuestionId">Добавление ответа</a>
+        </li>
+    }
+
+    <li class="nav-item">
+        <a class="nav-link @NavPages.PageNavClass(ViewContext, Model.QuestionId.ToString())" asp-controller="Questions" asp-action="Details" asp-route-id="@Model.QuestionId">Ответы</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Tests" asp-action="Info" asp-route-id="@Model.TestId">Вопросы</a>
+    </li>
+</ul>
+<br />
