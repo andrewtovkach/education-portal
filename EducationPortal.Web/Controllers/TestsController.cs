@@ -369,15 +369,15 @@ namespace EducationPortal.Web.Controllers
             }).GroupBy(x => (int)(x.AverageResult / 10))
             .Select(group => new ChartValueViewModel
             {
-                StartRange = group.Key * 10,
-                EndRange = group.Key * 10 + 10,
-                Count = group.Count()
+                Name = $"{group.Key * 10} - {group.Key * 10 + 10}%",
+                Y = group.Count()
             });
 
             return View(new StatisticsViewModel
             {
                 TestId = test.Id,
                 TestName = test.Name,
+                Names = chartValues.Select(x => x.Name),
                 ChartValues = chartValues
             });
         }

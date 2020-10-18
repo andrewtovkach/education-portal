@@ -6,6 +6,7 @@ namespace EducationPortal.Web.Models
     {
         public int TestId { get; set; }
         public string TestName { get; set; }
+        public IEnumerable<string> Names { get; set; }
         public IEnumerable<ChartValueViewModel> ChartValues { get; set; }
     }
 }

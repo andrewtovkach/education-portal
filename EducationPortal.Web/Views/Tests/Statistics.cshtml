@@ -5,6 +5,8 @@
     ViewData["ActivePage"] = "Statistics";
 }
 
+@{ var title = $"Статистика по тесту {Model.TestName}"; }
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
@@ -30,7 +32,84 @@
     </div>
     <div class="col-md-9">
         <div class="row">
-            Контент
+            <div id="container"></div>
         </div>
     </div>
+</div>
 
+@section Scripts
+{
+    <script>
+        $(function () {
+            var names = [];
+
+            @foreach (var name in Model.Names)
+            {
+                @:names.push('@name');
+            }
+
+            var data = [];
+
+            @foreach (var chartValue in Model.ChartValues)
+            {
+                @:data.push({ y: @chartValue.Y, name: '@chartValue.Name' });
+            }
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'bar',
+                },
+                legend: {
+                    enabled: true,
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle',
+                    labelFormatter: function () {
+                        return this.name + " - <span class='total'>" + this.y + "</span>"
+                    }
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: names,
+                    allowDecimals: false
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    },
+                    allowDecimals: false
+                },
+                plotOptions: {
+                    series: {
+                        events: {
+                            legendItemClick: function (x) {
+                                var i = this.index - 1;
+                                var series = this.chart.series[0];
+                                var point = series.points[i];
+
+                                if (point.oldY == undefined)
+                                    point.oldY = point.y;
+
+                                point.update({ y: point.y != null ? null : point.oldY });
+                            }
+                        }
+                    }
+                },
+                legend: {
+                    labelFormatter: function () {
+                        return names[this.index - 1];
+                    }
+                },
+                series: [
+                    {
+                        pointWidth: 20,
+                        showInLegend: false,
+                        data: data
+                    }
+                ]
+            });
+        });
+    </script>
+}
