@@ -8,6 +8,10 @@
     <li class="nav-item">
         <a class="nav-link @NavPages.PageNavClass(ViewContext, "AllResults")" asp-controller="Tests" asp-action="AllResults" asp-route-id="@Model.TestId">Результат теста @Model.TestName</a>
     </li>
+
+    <li class="nav-item">
+        <a class="nav-link @NavPages.PageNavClass(ViewContext, "Statistics")" asp-controller="Tests" asp-action="Statistics" asp-route-id="@Model.TestId">Статистика по тесту @Model.TestName</a>
+    </li>
 </ul>
 <br />
 

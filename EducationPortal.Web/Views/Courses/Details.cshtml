@@ -214,9 +214,17 @@
                             @if (User.IsInRole("admin") || User.IsInRole("tutor"))
                             {
                         <form asp-controller="Courses" asp-action="DeleteTest" asp-route-id="@test.Test.Id" asp-route-moduleId="@Model.ActiveModuleId" asp-route-courseId="@Model.CourseId" method="post">
-                            <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="Info" asp-route-id="@test.Test.Id">Открыть</a>
-                            <a class="btn btn-sm btn-outline-primary" asp-controller="Tests" asp-action="AllResults" asp-route-id="@test.Test.Id">Результаты</a>
-                            
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Действия
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Tests" asp-action="Info" asp-route-id="@test.Test.Id">Открыть</a>
+                                    <a class="dropdown-item" asp-controller="Tests" asp-action="AllResults" asp-route-id="@test.Test.Id">Результаты</a>
+                                    <a class="dropdown-item" asp-controller="Tests" asp-action="Statistics" asp-route-id="@test.Test.Id">Статистика</a>
+                                </div>
+                            </div>
+
                             <button type="submit" class="btn btn-sm btn-outline-danger">
                                 Удалить
                             </button>

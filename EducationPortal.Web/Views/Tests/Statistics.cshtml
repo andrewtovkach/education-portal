@@ -1,0 +1,36 @@
+﻿@model StatisticsViewModel
+
+@{
+    ViewData["Title"] = $"Статистика по тесту {Model.TestName}";
+    ViewData["ActivePage"] = "Statistics";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId">Курс @ViewBag.CourseName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId" asp-route-moduleId="@ViewBag.ModuleId">Модуль @ViewBag.ModuleName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Tests" asp-action="Info" asp-route-id="@Model.TestId">Тест @Model.TestName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Статистика по тесту @Model.TestName</li>
+    </ol>
+</nav>
+
+<div class="page-header">
+    <h1>Статистика по тесту @Model.TestName</h1>
+    <hr />
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_TestsNav", new TestCompletionNavViewModel
+   {
+        TestId = Model.TestId,
+        TestName = Model.TestName
+   })
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            Контент
+        </div>
+    </div>
+
