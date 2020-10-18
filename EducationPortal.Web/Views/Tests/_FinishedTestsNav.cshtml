@@ -1,7 +1,13 @@
-﻿@model IEnumerable<EducationPortal.Web.Data.Entities.TestCompletion>
+﻿@model FinishedTestViewModel
 
 <ul class="nav nav-pills flex-column">
-    @foreach (var testCompletion in Model)
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Courses" asp-action="Details" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId">
+            Модуль @Model.ModuleName
+        </a>
+    </li>
+
+    @foreach (var testCompletion in Model.TestCompletions)
     {
         <li class="nav-item">
             <a class="nav-link @NavPages.PageNavClass(ViewContext, testCompletion.TestId.ToString())" asp-controller="Tests" asp-action="FinishedTest" asp-route-id="@testCompletion.TestId">

@@ -1,0 +1,13 @@
+﻿@model TestCompletionNavViewModel
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Tests" asp-action="Info" asp-route-id="@Model.TestId">Тест @Model.TestName</a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link @NavPages.PageNavClass(ViewContext, "AllResults")" asp-controller="Tests" asp-action="AllResults" asp-route-id="@Model.TestId">Результат теста @Model.TestName</a>
+    </li>
+</ul>
+<br />
+

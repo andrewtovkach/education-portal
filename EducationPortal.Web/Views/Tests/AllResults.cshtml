@@ -1,0 +1,59 @@
+﻿@model TestCompletionNavViewModel
+
+@{
+    ViewData["Title"] = $"Результаты теста {Model.TestName}";
+    ViewData["ActivePage"] = "AllResults";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Courses" asp-action="Index">Курсы</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId">Курс @ViewBag.CourseName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Courses" asp-action="Details" asp-route-id="@ViewBag.CourseId" asp-route-moduleId="@ViewBag.ModuleId">Модуль @ViewBag.ModuleName</a></li>
+        <li class="breadcrumb-item" aria-current="page"><a asp-controller="Tests" asp-action="Info" asp-route-id="@Model.TestId">Тест @Model.TestName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Результаты теста @Model.TestName</li>
+    </ol>
+</nav>
+
+<div class="page-header">
+    <h1>Результаты теста @Model.TestName</h1>
+    <hr />
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        @Html.Partial("_TestsNav", Model)
+    </div>
+    <div class="col-md-9">
+        <div class="row">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Студент</th>
+                        <th scope="col">Последняя попытка</th>
+                        <th scope="col">Средний результат</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var testCompeletion in Model.TestCompeletions)
+                    {
+                        <tr scope="row">
+                            <td>@testCompeletion.UserName</td>
+                            <td>@testCompeletion.LastAttempt</td>
+                            <td>@testCompeletion.AverageResult</td>
+                        </tr>
+                    }
+
+                    @if (!Model.TestCompeletions.Any())
+                    {
+                        <tr scope="row">
+                            <td>Результаты не найдены!</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+

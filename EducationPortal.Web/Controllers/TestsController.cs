@@ -302,6 +302,45 @@ namespace EducationPortal.Web.Controllers
             return hasNotification ? View(attemptViewModel).WithSuccess("", "Тест был завершен!") : View(attemptViewModel);
         }
 
+        public IActionResult AllResults(int id)
+        {
+            var test = _educationPortalDbContext.Tests
+                .Include(x => x.Module)
+                .ThenInclude(x => x.Course)
+                .Include(x => x.Questions)
+                .FirstOrDefault(x => x.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CourseId = test.Module.CourseId;
+            ViewBag.CourseName = test.Module.Course.Name;
+            ViewBag.ModuleId = test.ModuleId;
+            ViewBag.ModuleName = test.Module.Name;
+            ViewBag.Tests = _educationPortalDbContext.Tests.Where(x => x.ModuleId == test.ModuleId);
+
+            var testCompeletions = _educationPortalDbContext.TestCompletions.Where(x => x.TestId == id)
+                .Include(x => x.Attempts).ToList();
+
+            var testResults = testCompeletions.Select(testCompletion => new TestCompeletionViewModel
+            {
+                UserName = _userManager.FindByIdAsync(testCompletion.UserId.ToString()).GetAwaiter().GetResult().UserName,
+                AverageResult = testCompletion.Attempts.Average(x => x.Score),
+                LastAttempt = testCompletion.Attempts.Last().Date
+            });
+
+            var model = new TestCompletionNavViewModel()
+            {
+                TestCompeletions = testResults,
+                TestId = id,
+                TestName = _educationPortalDbContext.Tests.FirstOrDefault(x => x.Id == id).Name
+            };
+
+            return View(model);
+        }
+
         #region Private Methods
         private static IEnumerable<QuestionViewModel> GetQuestionViewModels(Test test)
         {
